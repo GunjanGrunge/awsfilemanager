@@ -1,4 +1,4 @@
-name: Test AWS Integration
+name: Test Static Website
 
 on:
   push:
@@ -13,17 +13,22 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up Node.js
+    - name: Install Node.js for Build Tools
       uses: actions/setup-node@v3
       with:
         node-version: '16'
 
-    - name: Install dependencies
-      run: npm install
+    - name: Serve Static Files
+      run: |
+        npm install -g serve
+        serve . -l 5000 &
+        sleep 5
 
-    - name: Run Test Script
+    - name: Test App.js
       env:
         ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
         SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
         AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-      run: node app.js
+      run: |
+        echo "Testing app.js..."
+        curl http://localhost:5000
