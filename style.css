@@ -1,0 +1,63 @@
+body, .navbar, .modal-title {
+    font-family: 'Audiowide', serif;
+    background: linear-gradient(to right, #89fffd, #ef32d9); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+    
+    .navbar {
+        background: linear-gradient(to right, #ef32d9, #89fffd); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+.navbar-brand, .nav-link, .dropdown-item {
+    color: #000000 !important;
+
+}
+
+.navbar-brand:hover, .nav-link:hover, .dropdown-item:hover {
+    color: #d4d4d4 !important;
+}
+
+.modal-content {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+.modal-body {
+    font-family: 'Roboto', serif;
+    font-weight: 400;
+    font-style: normal;
+    color: #0ecf18;
+}
+
+.custom-input {
+    width: 100%;
+    font-family: 'Roboto', serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.custom-file-input {
+    width: 50%; /* Adjust the width as needed */
+    margin: 0 auto; /* Center the input */
+}
+
+.custom-file-label {
+    width: 50%; /* Adjust the width as needed */
+    margin: 0 auto; /* Center the label */
+}
+
+.upload-section {
+    text-align: center;
+}
+
+.upload-section .form-group {
+    display: inline-block;
+    text-align: left;
+}
+
+.upload-section .btn {
+    display: block;
+    margin: 10px auto;
+}
