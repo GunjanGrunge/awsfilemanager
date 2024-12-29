@@ -31,7 +31,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const s3Contents = document.getElementById('s3-contents');
             
             if (!data.Contents && !data.CommonPrefixes) {
-                s3Contents.innerHTML = '<tr><td colspan="3">No contents found</td></tr>';
+                if (s3Contents) {
+                    s3Contents.innerHTML = '<tr><td colspan="3">No contents found</td></tr>';
+                } else {
+                    console.error('Element not found');
+                }
                 return;
             }
 
@@ -56,10 +60,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 </tr>
             `).join('');
 
-            s3Contents.innerHTML = folders + files;
+            if (s3Contents) {
+                s3Contents.innerHTML = folders + files;
+            } else {
+                console.error('Element not found');
+            }
 
             // Show or hide the "Navigate Up" button
-            document.getElementById('navigate-up-button').style.display = prefix ? 'block' : 'none';
+            const navigateUpButton = document.getElementById('navigate-up-button');
+            if (navigateUpButton) {
+                navigateUpButton.style.display = prefix ? 'block' : 'none';
+            } else {
+                console.error('Element not found');
+            }
         } catch (err) {
             console.error('Error fetching S3 contents:', err);
             showToast('Error fetching S3 contents. Please check console for details.', 'danger');
@@ -71,14 +84,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const date = new Date().toLocaleString();
         history.push({ date, action, size, fileCount });
         const historyContents = document.getElementById('history-contents');
-        historyContents.innerHTML = history.map(item => `
-            <tr>
-                <td>${item.date}</td>
-                <td>${item.action}</td>
-                <td>${(item.size / (1024 * 1024)).toFixed(2)} MB</td>
-                <td>${item.fileCount}</td>
-            </tr>
-        `).join('');
+        if (historyContents) {
+            historyContents.innerHTML = history.map(item => `
+                <tr>
+                    <td>${item.date}</td>
+                    <td>${item.action}</td>
+                    <td>${(item.size / (1024 * 1024)).toFixed(2)} MB</td>
+                    <td>${item.fileCount}</td>
+                </tr>
+            `).join('');
+        } else {
+            console.error('Element not found');
+        }
 
         // Save history to S3
         const params = {
@@ -100,14 +117,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await s3.getObject(params).promise();
             history = JSON.parse(data.Body.toString());
             const historyContents = document.getElementById('history-contents');
-            historyContents.innerHTML = history.map(item => `
-                <tr>
-                    <td>${item.date}</td>
-                    <td>${item.action}</td>
-                    <td>${(item.size / (1024 * 1024)).toFixed(2)} MB</td>
-                    <td>${item.fileCount}</td>
-                </tr>
-            `).join('');
+            if (historyContents) {
+                historyContents.innerHTML = history.map(item => `
+                    <tr>
+                        <td>${item.date}</td>
+                        <td>${item.action}</td>
+                        <td>${(item.size / (1024 * 1024)).toFixed(2)} MB</td>
+                        <td>${item.fileCount}</td>
+                    </tr>
+                `).join('');
+            } else {
+                console.error('Element not found');
+            }
         } catch (err) {
             console.error('Error loading history:', err);
         }
@@ -120,19 +141,47 @@ document.addEventListener('DOMContentLoaded', function() {
             const objects = await s3.listObjectsV2(params).promise();
             const totalSize = objects.Contents?.reduce((acc, obj) => acc + obj.Size, 0) || 0;
             const fileCount = objects.Contents?.length || 0;
-            
+            const folderCount = objects.CommonPrefixes?.length || 0;
+
+            // Calculate the number of files in each folder
+            const folderFileCounts = {};
+            objects.Contents.forEach(obj => {
+                const folder = obj.Key.split('/')[0];
+                if (!folderFileCounts[folder]) {
+                    folderFileCounts[folder] = 0;
+                }
+                folderFileCounts[folder]++;
+            });
+
+            const folderDetails = Object.entries(folderFileCounts).map(([folder, count]) => `
+                <p>Folder: ${folder}, File Count: ${count}</p>
+            `).join('');
+
             const bucketDetails = `
                 <div class="bucket-info mb-4">
                     <p>Total Size: ${(totalSize / (1024 * 1024)).toFixed(2)} MB</p>
                     <p>File Count: ${fileCount}</p>
+                    <p>Folder Count: ${folderCount}</p>
+                    <p>Total Items: ${fileCount + folderCount}</p>
+                    ${folderDetails}
                 </div>
             `;
 
-            document.getElementById('s3-info-content').innerHTML = bucketDetails;
+            const s3InfoContent = document.getElementById('s3-info-content');
+            if (s3InfoContent) {
+                console.log('s3-info-content element found:', s3InfoContent);
+                s3InfoContent.innerHTML = bucketDetails;
+            } else {
+                console.error('Element with ID "s3-info-content" not found');
+            }
             $('#s3InfoModal').modal('show');
         } catch (error) {
             console.error('Error fetching S3 info:', error);
-            showToast('Failed to fetch S3 information. Please check console for details.', 'danger');
+            if (error.code === 'InvalidAccessKeyId') {
+                showToast('Invalid AWS Access Key Id. Please check your credentials.', 'danger');
+            } else {
+                showToast('Failed to fetch S3 information. Please check console for details.', 'danger');
+            }
         }
     });
 
@@ -144,12 +193,24 @@ document.addEventListener('DOMContentLoaded', function() {
         const progressBarInner = progressBar.querySelector('.progress-bar');
 
         if (!folderInput.files.length) {
-            errorMessage.classList.remove('d-none');
+            if (errorMessage) {
+                errorMessage.classList.remove('d-none');
+            } else {
+                console.error('Element not found');
+            }
             return;
         }
 
-        errorMessage.classList.add('d-none');
-        progressBar.classList.remove('d-none');
+        if (errorMessage) {
+            errorMessage.classList.add('d-none');
+        } else {
+            console.error('Element not found');
+        }
+        if (progressBar) {
+            progressBar.classList.remove('d-none');
+        } else {
+            console.error('Element not found');
+        }
 
         try {
             const existingFiles = await s3.listObjectsV2({ Bucket: process.env.AWS_BUCKET_NAME, Prefix: currentPrefix }).promise();
@@ -182,9 +243,21 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error uploading files:', err);
             showToast('Error uploading files. Please check console for details.', 'danger');
         } finally {
-            progressBar.classList.add('d-none');
-            progressBarInner.style.width = '0%';
-            folderInput.value = '';
+            if (progressBar) {
+                progressBar.classList.add('d-none');
+            } else {
+                console.error('Element not found');
+            }
+            if (progressBarInner) {
+                progressBarInner.style.width = '0%';
+            } else {
+                console.error('Element not found');
+            }
+            if (folderInput) {
+                folderInput.value = '';
+            } else {
+                console.error('Element not found');
+            }
         }
     });
 
@@ -282,7 +355,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('home-link').addEventListener('click', function() {
         document.getElementById('folders-section').classList.add('d-none');
         document.getElementById('history-section').classList.add('d-none');
-        document.getElementById('s3-contents').innerHTML = '';
+        const s3Contents = document.getElementById('s3-contents');
+        if (s3Contents) {
+            s3Contents.innerHTML = '';
+        } else {
+            console.error('Element not found');
+        }
     });
 
     // Clear history button handler
@@ -313,7 +391,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.getElementById('confirm-clear-history').addEventListener('click', async function() {
             history = [];
-            document.getElementById('history-contents').innerHTML = '';
+            const historyContents = document.getElementById('history-contents');
+            if (historyContents) {
+                historyContents.innerHTML = '';
+            } else {
+                console.error('Element not found');
+            }
             showToast('History cleared.', 'success');
 
             // Clear history in S3
@@ -328,7 +411,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hide the modal
             $('#clearHistoryModal').modal('hide');
             $('#clearHistoryModal').on('hidden.bs.modal', function () {
-                document.getElementById('clearHistoryModal').remove();
+                const clearHistoryModalElement = document.getElementById('clearHistoryModal');
+                if (clearHistoryModalElement) {
+                    clearHistoryModalElement.remove();
+                } else {
+                    console.error('Element not found');
+                }
             });
         });
     });
