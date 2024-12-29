@@ -1,21 +1,17 @@
-const accessKeyId = process.env.ACCESS_KEY_ID;
-const secretAccessKey = process.env.SECRET_ACCESS_KEY;
-const awsmusicbackupbucket = process.env.AWS_BUCKET_NAME;
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Configure AWS
+    // Configure AWS using secrets from environment variables
     AWS.config.update({
         region: 'ap-south-1',
         credentials: new AWS.Credentials({
-            accessKeyId: accessKeyId,
-            secretAccessKey: secretAccessKey
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
         })
     });
 
     // Create S3 service object
     const s3 = new AWS.S3({
         apiVersion: '2006-03-01',
-        params: { Bucket: awsmusicbackupbucket },
+        params: { Bucket: process.env.AWS_BUCKET_NAME },
         signatureVersion: 'v4'
     });
 
@@ -27,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             currentPrefix = prefix;
             const params = {
-                Bucket: 'awsmusicbackupbucket',
+                Bucket: process.env.AWS_BUCKET_NAME,
                 Prefix: prefix,
                 Delimiter: '/'
             };
@@ -86,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Save history to S3
         const params = {
-            Bucket: 'awsmusicbackupbucket',
+            Bucket: process.env.AWS_BUCKET_NAME,
             Key: 'history-log.json',
             Body: JSON.stringify(history),
             ContentType: 'application/json'
@@ -98,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function loadHistory() {
         try {
             const params = {
-                Bucket: 'awsmusicbackupbucket',
+                Bucket: process.env.AWS_BUCKET_NAME,
                 Key: 'history-log.json'
             };
             const data = await s3.getObject(params).promise();
@@ -120,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // S3 Info click handler
     document.getElementById('s3-info-link').addEventListener('click', async function() {
         try {
-            const params = { Bucket: 'awsmusicbackupbucket' };
+            const params = { Bucket: process.env.AWS_BUCKET_NAME };
             const objects = await s3.listObjectsV2(params).promise();
             const totalSize = objects.Contents?.reduce((acc, obj) => acc + obj.Size, 0) || 0;
             const fileCount = objects.Contents?.length || 0;
@@ -156,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
         progressBar.classList.remove('d-none');
 
         try {
-            const existingFiles = await s3.listObjectsV2({ Bucket: 'awsmusicbackupbucket', Prefix: currentPrefix }).promise();
+            const existingFiles = await s3.listObjectsV2({ Bucket: process.env.AWS_BUCKET_NAME, Prefix: currentPrefix }).promise();
             const existingKeys = new Set(existingFiles.Contents.map(item => item.Key));
             let newFilesCount = 0;
             let totalSize = 0;
@@ -165,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const key = file.webkitRelativePath || file.name;
                 if (!existingKeys.has(key)) {
                     const params = {
-                        Bucket: 'awsmusicbackupbucket',
+                        Bucket: process.env.AWS_BUCKET_NAME,
                         Key: key,
                         Body: file
                     };
@@ -201,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const key = event.target.getAttribute('data-key');
             try {
                 const data = await s3.getObject({
-                    Bucket: 'awsmusicbackupbucket',
+                    Bucket: process.env.AWS_BUCKET_NAME,
                     Key: key
                 }).promise();
 
@@ -224,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const prefix = event.target.getAttribute('data-prefix');
             try {
                 const params = {
-                    Bucket: 'awsmusicbackupbucket',
+                    Bucket: process.env.AWS_BUCKET_NAME,
                     Prefix: prefix
                 };
                 const data = await s3.listObjectsV2(params).promise();
@@ -233,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 for (const item of data.Contents) {
                     const fileData = await s3.getObject({
-                        Bucket: 'awsmusicbackupbucket',
+                        Bucket: process.env.AWS_BUCKET_NAME,
                         Key: item.Key
                     }).promise();
                     zip.file(item.Key.replace(prefix, ''), fileData.Body);
@@ -322,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Clear history in S3
             const params = {
-                Bucket: 'awsmusicbackupbucket',
+                Bucket: process.env.AWS_BUCKET_NAME,
                 Key: 'history-log.json',
                 Body: JSON.stringify(history),
                 ContentType: 'application/json'
