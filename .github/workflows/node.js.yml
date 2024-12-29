@@ -18,11 +18,21 @@ jobs:
       with:
         node-version: '16'
 
+    - name: Check for required secrets
+      run: |
+        if [ -z "${{ secrets.ACCESS_KEY_ID }}" ]; then echo "Missing ACCESS_KEY_ID secret" && exit 1; fi
+        if [ -z "${{ secrets.SECRET_ACCESS_KEY }}" ]; then echo "Missing SECRET_ACCESS_KEY secret" && exit 1; fi
+        if [ -z "${{ secrets.AWS_BUCKET_NAME }}" ]; then echo "Missing AWS_BUCKET_NAME secret" && exit 1; fi
+
     - name: Serve Static Files
       run: |
         npm install -g serve
         serve . -l 5000 &
         sleep 5
+
+    - name: Wait for the server to start
+      run: |
+        for i in {1..10}; do curl --silent --fail http://localhost:5000 && break || sleep 2; done
 
     - name: Test App.js
       env:
