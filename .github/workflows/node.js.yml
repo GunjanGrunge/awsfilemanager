@@ -26,4 +26,4 @@ jobs:
         ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
         SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
         AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-      run: node index.js
+      run: node app.js
