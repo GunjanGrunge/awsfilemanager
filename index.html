@@ -6,6 +6,19 @@
     <title>File Manager</title>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1001.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/oidc-client-ts@1.11.5/dist/oidc-client-ts.min.js"></script>
+    <!-- Remove the old Firebase scripts -->
+    <!-- Add these new Firebase script imports -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } 
+        from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js';
+        window.initializeApp = initializeApp;
+        window.getAuth = getAuth;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.signOut = signOut;
+        window.onAuthStateChanged = onAuthStateChanged;
+    </script>
     <!-- Include Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,113 +26,190 @@
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <a class="navbar-brand" href="#">File Manager</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#" id="home-link">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="s3-info-link">S3 Info</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="folders-link">Folders</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="history-link">History</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="cost-link">Cost</a>
-                </li>
-            </ul>
-            <span class="navbar-text mx-auto">
-                powered by <img src="src/Amazon_Web_Services-Logo.wine.png" alt="AWS Logo" style="height: 30px; vertical-align: middle;">
-            </span>
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <span class="navbar-text" id="username">Username</span>
-                </li>
-                <li class="nav-item">
-                    <button class="btn btn-outline-light ml-2" id="logout-button">Logout</button>
-                </li>
-            </ul>
+    <!-- Login Container -->
+    <div class="login-container" id="login-container">
+        <h2>Login</h2>
+        <div class="alert alert-danger d-none" id="login-error-message" role="alert">
+            Invalid username or password.
         </div>
-    </nav>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="login-username" autocomplete="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="login-password" autocomplete="current-password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+    </div>
 
-    <!-- Upload Folder Section -->
-    <div class="container mt-4 upload-section">
-        <div class="alert alert-danger d-none" id="error-message" role="alert">
-            Please Select A Folder
-        </div>
-        <div class="form-group">
-            <label for="folder-upload" class="audiowide-regular">Upload Folder</label>
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" id="folder-upload" webkitdirectory directory multiple>
-                <label class="custom-file-label" for="folder-upload">Choose folder...</label>
+    <!-- Main UI Container -->
+    <div id="main-ui" class="d-none">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <a class="navbar-brand" href="#">File Manager</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#" id="home-link">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="s3-info-link">S3 Info</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="folders-link">Folders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="history-link">History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="cost-link">Cost</a>
+                    </li>
+                </ul>
+                <span class="navbar-text mx-auto">
+                    powered by <img src="src/Amazon_Web_Services-Logo.wine.png" alt="AWS Logo" style="height: 30px; vertical-align: middle;">
+                </span>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <span class="navbar-text" id="username">Username</span>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light ml-2" id="logout-button">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Upload Folder Section -->
+        <div class="container mt-4 upload-section">
+            <div class="alert alert-danger d-none" id="error-message" role="alert">
+                Please Select A Folder
+            </div>
+            <div class="form-group">
+                <label for="folder-upload" class="audiowide-regular">Upload Folder</label>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="folder-upload" webkitdirectory directory multiple>
+                    <label class="custom-file-label" for="folder-upload">Choose folder...</label>
+                </div>
+            </div>
+            <button id="upload-button" class="btn btn-warning">Upload</button>
+            <div class="progress mt-3 d-none" id="upload-progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                     role="progressbar" 
+                     style="width: 0%;" 
+                     aria-valuenow="0" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100">0%</div>
             </div>
         </div>
-        <button id="upload-button" class="btn btn-warning">Upload</button>
-        <div class="progress mt-3 d-none" id="upload-progress">
-            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+
+        <!-- Replace the Folders and Files Table section -->
+        <div class="container mt-4 d-none" id="folders-section">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Files & Folders</h5>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0 bg-transparent" id="folder-breadcrumb">
+                                <li class="breadcrumb-item"><a href="#" data-prefix="">Root</a></li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px"></th>
+                                    <th>Name</th>
+                                    <th style="width: 120px">Size</th>
+                                    <th style="width: 160px">Last Modified</th>
+                                    <th style="width: 120px">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="s3-contents">
+                                <!-- S3 contents will be displayed here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Table -->
+        <div class="container mt-4 d-none" id="history-section">
+            <h2 class="audiowide-regular">History</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Action</th>
+                        <th>Size</th>
+                        <th>Number of Files</th>
+                    </tr>
+                </thead>
+                <tbody id="history-contents">
+                    <!-- History contents will be displayed here -->
+                </tbody>
+            </table>
+            <button id="clear-history-button" class="btn btn-danger mb-3">Clear History</button>
+        </div>
+
+        <!-- Remove the cost section -->
+
+        <!-- Update the S3 Info Modal -->
+        <div class="modal fade" id="s3InfoModal" tabindex="-1" role="dialog" aria-labelledby="s3InfoModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="s3InfoModalLabel">S3 Bucket Details</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" tabindex="0">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="s3-info-content">
+                            <!-- S3 info content will be dynamically inserted here -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Container -->
+        <div aria-live="polite" aria-atomic="true" class="toast-container">
+            <div id="toast-container" class="position-fixed top-0 right-0 p-3" style="z-index: 1050;"></div>
         </div>
     </div>
 
-    <!-- Existing Folders and Files Table -->
-    <div class="container mt-4 d-none" id="folders-section">
-        <h2 class="audiowide-regular">Existing Folders and Files</h2>
-        <button id="navigate-up-button" class="btn btn-dark mb-3" style="display: none;">Navigate Up</button>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="s3-contents">
-                <!-- S3 contents will be displayed here -->
-            </tbody>
-        </table>
-    </div>
-
-    <!-- History Table -->
-    <div class="container mt-4 d-none" id="history-section">
-        <h2 class="audiowide-regular">History</h2>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Action</th>
-                    <th>Size</th>
-                    <th>Number of Files</th>
-                </tr>
-            </thead>
-            <tbody id="history-contents">
-                <!-- History contents will be displayed here -->
-            </tbody>
-        </table>
-        <button id="clear-history-button" class="btn btn-danger mb-3">Clear History</button>
-    </div>
-
-    <!-- S3 Info Modal -->
-    <div class="modal fade" id="s3InfoModal" tabindex="-1" aria-labelledby="s3InfoModalLabel" aria-hidden="true">
+    <!-- Add Cost Modal before the closing body tag -->
+    <div class="modal fade" id="costModal" tabindex="-1" aria-labelledby="costModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="s3InfoModalLabel">S3 Bucket Details</h5>
+                    <h5 class="modal-title" id="costModalLabel">AWS Cost Overview</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body" id="s3-info-content">
-                    <!-- S3 bucket details will be displayed here -->
+                <div class="modal-body">
+                    <div id="cost-details">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -128,15 +218,9 @@
         </div>
     </div>
 
-    <!-- Toast Container -->
-    <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
-        <div id="toast-container" style="position: absolute; top: 0; left: 0;"></div>
-    </div>
-
     <!-- Include jQuery and Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
     <script src="dist/bundle.js"></script>
 </body>
 </html>

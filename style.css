@@ -50,6 +50,7 @@ body, .navbar, .modal-title {
 
 .upload-section {
     text-align: center;
+    display: block;
 }
 
 .upload-section .form-group {
@@ -77,4 +78,371 @@ body, .navbar, .modal-title {
 /* New CSS for username */
 #username {
     color: #0ad436; /* Custom color for username */
+}
+
+/* New CSS for login page */
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+.login-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-container .form-group {
+    margin-bottom: 15px;
+}
+
+.login-container .btn {
+    width: 100%;
+}
+
+/* Authentication transitions */
+#login-container, #main-ui {
+    transition: opacity 0.3s ease-in-out;
+}
+
+#main-ui.d-none {
+    opacity: 0;
+}
+
+#main-ui {
+    opacity: 1;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Toast notifications */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    min-width: 250px;
+}
+
+.toast-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.toast-error {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Cost section styles */
+#cost-section .card {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#cost-section .card-title {
+    color: #495057;
+    font-size: 1.2rem;
+}
+
+#cost-section .card-text {
+    color: #28a745;
+    font-weight: bold;
+}
+
+#cost-details {
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Cost Modal styles */
+#costModal .modal-content {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+}
+
+#costModal .modal-header {
+    border-bottom: 1px solid #dee2e6;
+    background-color: #343a40;
+    color: white;
+}
+
+#costModal .cost-info {
+    text-align: center;
+    padding: 20px;
+}
+
+#costModal .current-cost h2 {
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+#costModal .cost-date {
+    margin-top: 10px;
+}
+
+#costModal .current-cost small {
+    display: block;
+    margin-top: 0.5rem;
+}
+
+/* S3 Info Modal styles */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-item h6 {
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.stat-item p {
+    margin-bottom: 0;
+}
+
+/* Improved Folders Section Styles */
+#folders-section .card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#folders-section .card-header {
+    border-bottom: none;
+}
+
+#folders-section .breadcrumb {
+    padding: 0;
+    margin: 0;
+}
+
+#folders-section .breadcrumb-item a {
+    color: #fff;
+    text-decoration: none;
+}
+
+#folders-section .breadcrumb-item a:hover {
+    color: #17a2b8;
+}
+
+#folders-section .breadcrumb-item.active {
+    color: #17a2b8;
+}
+
+#folders-section .table {
+    margin-bottom: 0;
+}
+
+#folders-section .table td {
+    vertical-align: middle;
+}
+
+.folder-icon, .file-icon {
+    font-size: 1.2rem;
+    width: 40px;
+    text-align: center;
+}
+
+.folder-icon {
+    color: #ffc107;
+}
+
+.file-icon {
+    color: #6c757d;
+}
+
+.folder-row {
+    cursor: pointer;
+}
+
+.folder-row:hover {
+    background-color: #f8f9fa;
+}
+
+.file-actions {
+    white-space: nowrap;
+}
+
+.file-size {
+    white-space: nowrap;
+    color: #6c757d;
+}
+
+.last-modified {
+    white-space: nowrap;
+    color: #6c757d;
+}
+
+/* Breadcrumb styles */
+#folder-breadcrumb {
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+}
+
+#folder-breadcrumb .breadcrumb-item {
+    color: #fff;
+}
+
+#folder-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.6);
+    content: "›";
+    font-size: 1.2em;
+    line-height: 1;
+    padding: 0 0.5rem;
+}
+
+#folder-breadcrumb .breadcrumb-item a {
+    color: #fff;
+    text-decoration: none;
+}
+
+#folder-breadcrumb .breadcrumb-item a:hover {
+    color: #17a2b8;
+}
+
+#folder-breadcrumb .breadcrumb-item.active {
+    color: #17a2b8;
+}
+
+/* Updated Folders Section Styles */
+#folders-section {
+    transition: opacity 0.3s ease-in-out;
+}
+
+#folders-section.d-none {
+    display: none !important;
+}
+
+#folders-section .table {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#folders-section .table thead th {
+    background-color: #343a40;
+    color: #ffffff;
+    border-bottom: none;
+    padding: 15px;
+}
+
+#folders-section .table tbody td {
+    padding: 12px 15px;
+    vertical-align: middle;
+    border-top: 1px solid #dee2e6;
+}
+
+.folder-row:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.back-link {
+    color: #495057;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px;
+}
+
+.back-link i {
+    margin-right: 5px;
+}
+
+.back-link:hover {
+    color: #007bff;
+    text-decoration: none;
+}
+
+/* Fix modal display issues */
+.modal-open {
+    overflow: auto !important;
+    padding-right: 0 !important;
+}
+
+.modal-backdrop {
+    z-index: 1040 !important;
+}
+
+.modal {
+    z-index: 1050 !important;
+}
+
+/* Active nav item styling */
+.nav-item.active .nav-link {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+/* Fix fullscreen navigation */
+@media (min-width: 992px) {
+    .navbar-expand-lg .navbar-nav {
+        flex-wrap: nowrap;
+    }
+    
+    .navbar-expand-lg .navbar-nav .nav-link {
+        padding-right: 1rem;
+        padding-left: 1rem;
+    }
+}
+
+/* Modal accessibility improvements */
+.modal {
+    overflow-y: auto !important;
+}
+
+.modal-open {
+    overflow: auto !important;
+    padding-right: 0 !important;
+}
+
+.modal:not(.show) {
+    pointer-events: none;
+}
+
+.modal.show {
+    pointer-events: auto;
+}
+
+.modal-backdrop {
+    opacity: 0.5;
+}
+
+/* Improve focus visibility */
+.modal .close:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
 }
