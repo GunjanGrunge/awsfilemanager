@@ -62,3 +62,19 @@ body, .navbar, .modal-title {
     margin: 10px auto;
 }
 
+/* New CSS for powered by AWS text and logo */
+.powered-by-aws {
+    font-size: 1.2em;
+    text-align: left;
+    margin-left: 120px;
+}
+
+.powered-by-aws img {
+    height: 40px;
+    vertical-align: middle;
+}
+
+/* New CSS for username */
+#username {
+    color: #0ad436; /* Custom color for username */
+}

@@ -134,6 +134,32 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Function to fetch AWS cost
+    async function fetchAWSCost() {
+        try {
+            const costExplorer = new AWS.CostExplorer({ region: 'us-east-1' });
+            const params = {
+                TimePeriod: {
+                    Start: new Date(new Date().setDate(1)).toISOString().split('T')[0],
+                    End: new Date().toISOString().split('T')[0]
+                },
+                Granularity: 'MONTHLY',
+                Metrics: ['UnblendedCost']
+            };
+            const data = await costExplorer.getCostAndUsage(params).promise();
+            const costDetails = document.getElementById('cost-details');
+            if (costDetails) {
+                const cost = data.ResultsByTime[0].Total.UnblendedCost.Amount;
+                costDetails.innerHTML = `<p>Total Cost: $${parseFloat(cost).toFixed(2)}</p>`;
+            } else {
+                console.error('Element not found');
+            }
+        } catch (err) {
+            console.error('Error fetching AWS cost:', err);
+            showToast('Error fetching AWS cost. Please check console for details.', 'danger');
+        }
+    }
+
     // S3 Info click handler
     document.getElementById('s3-info-link').addEventListener('click', async function() {
         try {
@@ -141,29 +167,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const objects = await s3.listObjectsV2(params).promise();
             const totalSize = objects.Contents?.reduce((acc, obj) => acc + obj.Size, 0) || 0;
             const fileCount = objects.Contents?.length || 0;
-            const folderCount = objects.CommonPrefixes?.length || 0;
-
-            // Calculate the number of files in each folder
-            const folderFileCounts = {};
-            objects.Contents.forEach(obj => {
-                const folder = obj.Key.split('/')[0];
-                if (!folderFileCounts[folder]) {
-                    folderFileCounts[folder] = 0;
-                }
-                folderFileCounts[folder]++;
-            });
-
-            const folderDetails = Object.entries(folderFileCounts).map(([folder, count]) => `
-                <p>Folder: ${folder}, File Count: ${count}</p>
-            `).join('');
 
             const bucketDetails = `
                 <div class="bucket-info mb-4">
-                    <p>Total Size: ${(totalSize / (1024 * 1024)).toFixed(2)} MB</p>
+                    <p>Total Size: ${(totalSize / (1024 * 1024 * 1024)).toFixed(2)} GB</p>
                     <p>File Count: ${fileCount}</p>
-                    <p>Folder Count: ${folderCount}</p>
-                    <p>Total Items: ${fileCount + folderCount}</p>
-                    ${folderDetails}
                 </div>
             `;
 
@@ -351,6 +359,14 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('history-section').classList.remove('d-none');
     });
 
+    // Cost link handler
+    document.getElementById('cost-link').addEventListener('click', function() {
+        document.getElementById('folders-section').classList.add('d-none');
+        document.getElementById('history-section').classList.add('d-none');
+        document.getElementById('cost-section').classList.remove('d-none');
+        fetchAWSCost();
+    });
+
     // Home link handler
     document.getElementById('home-link').addEventListener('click', function() {
         document.getElementById('folders-section').classList.add('d-none');
@@ -419,6 +435,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+    });
+
+    // Logout button handler
+    document.getElementById('logout-button').addEventListener('click', function() {
+        // Implement logout functionality here
+        alert('Logout button clicked');
     });
 
     // Initial fetch of S3 contents
