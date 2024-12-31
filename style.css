@@ -1,7 +1,7 @@
 /* Base Styles */
 body {
     font-family: "Poppins", serif;
-    font-weight: 500;
+    font-weight: 600;
     font-style: normal;
     background: linear-gradient(to right, #f5f7fa, #c3cfe2);
     padding-bottom: 100px;
@@ -275,9 +275,6 @@ body, .navbar, .modal-title {
 }
 
 /* New CSS for username */
-#username {
-    color: #0ad436; /* Custom color for username */
-}
 
 /* New CSS for login page */
 .login-container {
@@ -1317,3 +1314,39 @@ body, .navbar, .modal-title {
 #costModal .text-muted {
     color: #ffffff !important;
 }
+
+/* ...existing code... */
+
+/* Update Profile Modal Title */
+#updateProfileModal .modal-title {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 500;
+    background: none !important;  /* Remove background */
+    padding: 0;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+/* Username in Navbar */
+#userDropdown {
+    color: #ffffff !important;  /* Force white color */
+}
+
+#display-name {
+    color: #ffffff !important;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.nav-item.dropdown .dropdown-toggle:hover {
+    opacity: 0.9;
+}
+
+/* Adjust other modal titles to be consistent */
+.modal-title {
+    background: none !important;  /* Remove background from all modal titles */
+}
+
+/* ...existing code... */
