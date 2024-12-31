@@ -41,9 +41,11 @@ function showToast(message, type = 'info', duration = 3000) {
 
 // Declare global variables and function at the top
 let s3; // Ensure s3 is defined globally
+let auth; // Declare auth globally
 let fetchS3Contents;
 let currentPrefix = '';
 let history = [];
+let folderInput; // Declare folderInput globally
 
 // Add loadHistory function at the top with other global functions
 async function loadHistory() {
@@ -175,12 +177,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Firebase configuration
     const firebaseConfig = window.appConfig.FIREBASE_CONFIG;
 
-    let auth; // Declare auth variable in the outer scope
+    // Initialize folderInput
+    folderInput = document.getElementById('folder-upload');
     
     // Initialize Firebase with proper error handling
     try {
         const app = window.initializeApp(firebaseConfig);
-        auth = window.getAuth(app); // Assign to outer scope variable
+        auth = window.getAuth(app); // Assign to global auth variable
         
         // Move the auth state observer inside the try block
         window.onAuthStateChanged(auth, (user) => {
@@ -205,10 +208,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     // Function to show the main UI
-    function showMainUI(user) {
+    async function showMainUI(user) {
         document.getElementById('login-container').classList.add('d-none');
         document.getElementById('main-ui').classList.remove('d-none');
-        document.getElementById('username').textContent = user.email || 'User';
+        document.getElementById('display-name').textContent = user.displayName || user.email || 'User';
     
         // Initialize the main UI components
         fetchS3Contents();
@@ -2082,5 +2085,113 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // ...existing code...
 });
+
+// ...existing code...
+
+// Add this to your imports at the top
+import { updateProfile } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js';
+
+// ...existing code...
+
+// Add event listeners for dropdown items
+document.addEventListener('DOMContentLoaded', async function() {
+    // ...existing code...
+
+    // Update Profile link handler
+    document.getElementById('update-profile-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        openUpdateProfileModal();
+    });
+
+    // Change Password link handler
+    document.getElementById('change-password-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        openChangePasswordModal();
+    });
+
+    // Update Profile form submission handler
+    document.getElementById('update-profile-form').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const displayName = document.getElementById('display-name-input').value;
+        const email = document.getElementById('email-input').value;
+
+        try {
+            if (auth.currentUser) {
+                await updateProfile(auth.currentUser, {
+                    displayName: displayName
+                });
+
+                // If you need to update the email as well
+                if (auth.currentUser.email !== email) {
+                    await auth.currentUser.updateEmail(email);
+                }
+
+                showToast('Profile updated successfully', 'success');
+                $('#updateProfileModal').modal('hide');
+                // Update the display name in the UI
+                document.getElementById('display-name').textContent = displayName;
+            } else {
+                throw new Error('No user is currently signed in.');
+            }
+        } catch (error) {
+            console.error('Profile update error:', error);
+            showToast('Profile update failed: ' + error.message, 'danger');
+        }
+    });
+
+    // Change Password form submission handler
+    document.getElementById('change-password-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const newPassword = document.getElementById('new-password-input').value;
+        const confirmPassword = document.getElementById('confirm-password-input').value;
+
+        if (newPassword !== confirmPassword) {
+            showToast('Passwords do not match', 'warning');
+            return;
+        }
+
+        try {
+            if (auth.currentUser) {
+                await auth.currentUser.updatePassword(newPassword);
+                showToast('Password changed successfully', 'success');
+                $('#changePasswordModal').modal('hide');
+            }
+        } catch (error) {
+            console.error('Password change error:', error);
+            showToast('Error changing password', 'danger');
+        }
+    });
+});
+
+// Add these helper functions
+function openUpdateProfileModal() {
+    if (auth?.currentUser) { // Use optional chaining
+        document.getElementById('display-name-input').value = auth.currentUser.displayName || '';
+        document.getElementById('email-input').value = auth.currentUser.email || '';
+        $('#updateProfileModal').modal('show');
+    } else {
+        console.error('No authenticated user found');
+        showToast('Please log in first', 'warning');
+    }
+}
+
+function openChangePasswordModal() {
+    $('#changePasswordModal').modal('show');
+}
+
+// Update showMainUI to handle display name
+async function showMainUI(user) {
+    document.getElementById('login-container').classList.add('d-none');
+    document.getElementById('main-ui').classList.remove('d-none');
+    document.getElementById('display-name').textContent = user.displayName || user.email || 'User';
+
+    // Initialize the main UI components
+    fetchS3Contents();
+    loadHistory();
+
+    // Show the folders section by default
+    document.getElementById('folders-section').classList.remove('d-none');
+    document.getElementById('history-section').classList.add('d-none');
+}
 
 // ...existing code...
