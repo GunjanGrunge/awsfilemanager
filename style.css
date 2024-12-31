@@ -1,6 +1,182 @@
+/* Base Styles */
+body {
+    font-family: "Poppins", serif;
+    font-weight: 500;
+    font-style: normal;
+    background: linear-gradient(to right, #f5f7fa, #c3cfe2);
+    padding-bottom: 100px;
+    color: #333333;
+}
+
+/* Navbar Styles */
+.navbar {
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand, .nav-link {
+    color: #ffffff !important;
+}
+
+.navbar-brand:hover, .nav-link:hover {
+    color: #e0e0e0 !important;
+}
+
+/* Login Container */
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 30px;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.login-container h2 {
+    color: #2c3e50;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Alert Messages */
+.alert {
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.alert-danger {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+/* Upload Section */
+.upload-section {
+    background: #fbfdfd;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 30px;
+}
+
+.drop-zone {
+    width: 100%;
+    min-height: 200px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    border: 2px dashed #0087F7;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.drop-zone--over {
+    border-style: solid;
+    background-color: rgba(0, 135, 247, 0.1);
+    border-color: #0087F7;
+}
+
+.drop-zone__prompt {
+    pointer-events: none;
+    color: #666;
+}
+
+.drop-zone__input {
+    display: none;
+}
+
+/* Tables and Cards */
+.table {
+    background: #ffffff;
+}
+
+.table thead th {
+    background-color: #2c3e50;
+    color: #ffffff;
+    border-bottom: none;
+}
+
+.folder-icon {
+    color: #f39c12;
+}
+
+.file-icon {
+    color: #7f8c8d;
+}
+
+/* Buttons */
+.btn-warning {
+    background-color: #f39c12;
+    border-color: #f39c12;
+    color: #ffffff;
+}
+
+.btn-warning:hover {
+    background-color: #e67e22;
+    border-color: #e67e22;
+    color: #ffffff;
+}
+
+/* Toast Notifications */
+.toast {
+    background: rgba(44, 62, 80, 0.95);
+    border-radius: 8px;
+}
+
+.toast-header {
+    background-color: inherit;
+    color: #ffffff;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.toast-body {
+    color: #ffffff;
+}
+
+/* Progress Bar */
+.progress {
+    height: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.progress-bar {
+    background-color: #2ecc71;
+}
+
+/* History Section */
+#history-section {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(135deg, #2c3e50, #3498db) !important;
+    opacity: 0.95 !important;
+}
+
+/* Accessibility Improvements */
+:focus {
+    outline: 3px solid #3498db;
+    outline-offset: 2px;
+}
+
+/* Clean up unused styles ... */
 body, .navbar, .modal-title {
     font-family: 'Audiowide', serif;
     background: linear-gradient(to right, #bdc3c7, #2c3e50); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    padding-bottom: 100px !important; /* Ensure content doesn't get hidden behind footer */
+    color: #333333; /* Dark gray text for improved readability */
 }
     
     .navbar {
@@ -22,6 +198,21 @@ body, .navbar, .modal-title {
 .modal-content {
     background-color: #343a40;
     color: #ffffff;
+    border-radius: 15px;
+    border: none;
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+}
+
+.modal-title {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 500;
 }
 
 .modal-body {
@@ -29,6 +220,14 @@ body, .navbar, .modal-title {
     font-weight: 400;
     font-style: normal;
     color: #0ecf18;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
 }
 
 .custom-input {
@@ -144,7 +343,7 @@ body, .navbar, .modal-title {
 .toast-success {
     background-color: #d4edda;
     border-color: #c3e6cb;
-    color: #155724;
+    color: #fafafa;
 }
 
 .toast-error {
@@ -181,6 +380,7 @@ body, .navbar, .modal-title {
 #costModal .modal-content {
     background-color: #f8f9fa;
     border-radius: 10px;
+    background: linear-gradient(135deg, #1a1a2e, #2980b9) !important;
 }
 
 #costModal .modal-header {
@@ -192,6 +392,9 @@ body, .navbar, .modal-title {
 #costModal .cost-info {
     text-align: center;
     padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 2rem;
 }
 
 #costModal .current-cost h2 {
@@ -206,31 +409,6 @@ body, .navbar, .modal-title {
 #costModal .current-cost small {
     display: block;
     margin-top: 0.5rem;
-}
-
-/* S3 Info Modal styles */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.stat-item {
-    text-align: center;
-    padding: 1rem;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.stat-item h6 {
-    color: #6c757d;
-    margin-bottom: 0.5rem;
-}
-
-.stat-item p {
-    margin-bottom: 0;
 }
 
 /* Improved Folders Section Styles */
@@ -398,7 +576,17 @@ body, .navbar, .modal-title {
 }
 
 .modal {
-    z-index: 1050 !important;
+    z-index: 1060 !important;
+}
+
+.modal:not(.show) {
+    display: none !important;
+    visibility: hidden;
+}
+
+.modal.show {
+    display: block !important;
+    visibility: visible;
 }
 
 /* Active nav item styling */
@@ -445,4 +633,687 @@ body, .navbar, .modal-title {
 .modal .close:focus {
     outline: 2px solid #007bff;
     outline-offset: 2px;
+}
+
+/* New CSS for upload area */
+.upload-area {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.drop-zone {
+    width: 100%;
+    min-height: 200px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    border: 2px dashed #0087F7;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.drop-zone--over {
+    border-style: solid;
+    background-color: rgba(0, 135, 247, 0.1);
+    border-color: #0087F7;
+}
+
+.drop-zone__prompt {
+    pointer-events: none;
+    color: #666;
+}
+
+.drop-zone__input {
+    display: none;
+}
+
+/* Improved Upload List Styles */
+.upload-list {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.upload-list .list-group-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #ffffff;
+}
+
+.upload-list .list-group-item:last-child {
+    margin-bottom: 0;
+}
+
+.upload-list .fa-file,
+.upload-list .fa-folder {
+    margin-right: 10px;
+    color: #00c6ff;
+}
+
+/* Improved Remove Button */
+.remove-file {
+    background: rgba(220, 53, 69, 0.2) !important;
+    border: 1px solid rgba(220, 53, 69, 0.3) !important;
+    color: #ff6b6b !important;
+    padding: 5px 10px !important;
+    border-radius: 5px !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+}
+
+.remove-file:hover {
+    background: rgba(220, 53, 69, 0.4) !important;
+    color: #ffffff !important;
+    transform: scale(1.05);
+}
+
+.remove-file i {
+    font-size: 16px;
+}
+
+/* Better File List Spacing */
+.list-group-item > div {
+    display: flex;
+    align-items: center;
+    max-width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Updated Upload List Styles */
+.upload-list {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.upload-list h6 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.upload-list .list-group-item {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #333333;
+}
+
+.upload-list .list-group-item span {
+    display: flex;
+    align-items: center;
+    color: #333333;
+    font-size: 0.9rem;
+    max-width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upload-list .list-group-item:last-child {
+    margin-bottom: 0;
+}
+
+.upload-list .fa-file,
+.upload-list .fa-folder {
+    margin-right: 10px;
+    color: #3498db;
+}
+
+.upload-list .fa-folder {
+    color: #f39c12;
+}
+
+.upload-list .remove-file {
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.upload-list .remove-file:hover {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+    transform: scale(1.05);
+}
+
+.upload-list .remove-file i {
+    font-size: 16px;
+}
+
+/* ...existing code... */
+
+.upload-list {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.upload-list .list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+}
+
+.upload-list .list-group-item i {
+    margin-right: 10px;
+}
+
+.upload-list .remove-file {
+    cursor: pointer;
+    color: #dc3545;
+}
+
+.upload-list .remove-file:hover {
+    color: #bd2130;
+}
+
+
+/* History Modal Specific Styles */
+#clearHistoryModal .modal-content {
+    background: linear-gradient(135deg, #2c3e50, #c0392b);
+}
+
+/* Spinner Customization */
+.spinner-border {
+    color: #00c6ff;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    border-radius: 4px;
+}
+
+/* Toast Customization */
+.toast {
+    background: rgba(22, 33, 62, 0.95);
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.toast-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+
+
+/* Fix for modal z-index */
+.modal {
+    z-index: 1060 !important;
+}
+
+.modal-backdrop {
+    z-index: 1050 !important;
+}
+
+/* Ensure button text color contrasts with button background */
+.btn-warning {
+    color: #f5f3f3; /* Black text for better contrast */
+}
+
+/* ...existing code... */
+
+.drop-zone {
+    width: 100%;
+    min-height: 200px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    border: 2px dashed #0087F7;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.drop-zone--over {
+    border-style: solid;
+    background-color: rgba(0, 135, 247, 0.1);
+    border-color: #0087F7;
+}
+
+.drop-zone__prompt {
+    pointer-events: none;
+    color: #666;
+}
+
+.drop-zone__input {
+    display: none;
+}
+
+/* ...existing code... */
+
+/* Update folder content styles */
+#s3-contents a {
+    color: #333333 !important; /* Dark gray for better readability */
+    text-decoration: none;
+}
+
+#s3-contents a:hover {
+    color: #007bff !important; /* Bootstrap primary color on hover */
+    text-decoration: underline;
+}
+
+.folder-row td {
+    color: #333333; /* Dark gray for better readability */
+}
+
+.folder-row:hover td {
+    background-color: rgba(0, 123, 255, 0.1); /* Light blue background on hover */
+}
+
+.file-size, .file-actions {
+    color: #495057 !important; /* Darker gray for better contrast */
+}
+
+/* ...existing code... */
+
+/* Forgot Password Link */
+#forgot-password-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+#forgot-password-link:hover {
+    text-decoration: underline;
+}
+
+/* Forgot Password Modal */
+#forgotPasswordModal .modal-content {
+    border-radius: 10px;
+}
+
+#forgotPasswordModal .modal-header {
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+#forgotPasswordModal .modal-body {
+    padding: 20px;
+}
+#forgotPasswordModal .modal-title{
+    background: none;
+}
+#forgotPasswordModal .close {
+    color: white;
+}
+
+#forgotPasswordModal .text-muted {
+    color: #ffffff !important;
+}
+
+/* Alert Messages in Modal */
+#forgotPasswordModal .alert {
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+/* ...existing code... */
+
+/* Clear History Modal Styles */
+#clearHistoryModal .modal-content {
+    border: none;
+   
+    
+}
+
+#clearHistoryModal .modal-header {
+    border-bottom: none;
+    padding: 1.5rem;
+  
+}
+
+#clearHistoryModal .modal-title {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+#clearHistoryModal .modal-title i {
+    margin-right: 10px;
+    color: #ffc107;
+}
+
+#clearHistoryModal .modal-body {
+    color: #ffffff;
+    font-size: 1.1rem;
+    padding: 2rem;
+ 
+}
+
+#clearHistoryModal .modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+}
+
+#clearHistoryModal .close {
+    color: #ffffff;
+    text-shadow: none;
+    opacity: 0.8;
+}
+
+#clearHistoryModal .close:hover {
+    opacity: 1;
+}
+
+/* ...existing code... */
+
+/* Clear History Modal Styles - with higher specificity */
+#clearHistoryModal.modal .modal-content {
+    border: none !important;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2) !important;
+    background: #ffffff !important;
+}
+
+#clearHistoryModal.modal .modal-header {
+    background: #dc3545 !important;
+    border-bottom: none !important;
+    padding: 1.5rem !important;
+    border-top-left-radius: 0.3rem !important;
+    border-top-right-radius: 0.3rem !important;
+}
+
+#clearHistoryModal.modal .modal-header .modal-title {
+    color: #ffffff !important;
+    font-size: 1.2rem !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+#clearHistoryModal.modal .modal-header .fa-exclamation-triangle {
+    color: #ffc107 !important;
+    margin-right: 10px !important;
+}
+
+#clearHistoryModal.modal .modal-header .close {
+    color: #ffffff !important;
+    text-shadow: none !important;
+    opacity: 0.8 !important;
+    padding: 1rem !important;
+    margin: -1rem !important;
+}
+
+#clearHistoryModal.modal .modal-header .close:hover {
+    opacity: 1 !important;
+}
+
+#clearHistoryModal.modal .modal-body {
+    color: hsl(210, 11%, 15%) !important;
+    background: #ffffff !important;
+    font-size: 1.1rem !important;
+    padding: 2rem !important;
+}
+
+#clearHistoryModal.modal .modal-footer {
+    background: #ffffff !important;
+    border-top: 1px solid #dee2e6 !important;
+    padding: 1rem !important;
+}
+
+/* ...existing code... */
+
+/* Clear History Modal Styles - with higher specificity and overrides */
+.modal#clearHistoryModal {
+    z-index: 1060 !important;
+}
+
+.modal#clearHistoryModal .modal-dialog {
+    margin-top: 10vh;
+}
+
+.modal#clearHistoryModal .modal-content {
+    background: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+.modal#clearHistoryModal .modal-header {
+    background: #dc3545 !important;
+    border-bottom: none !important;
+    border-top-left-radius: 8px !important;
+    border-top-right-radius: 8px !important;
+    padding: 1rem !important;
+}
+
+.modal#clearHistoryModal .modal-title {
+    color: #ffffff !important;
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    background: #dc3545 !important;
+    align-items: center !important;
+}
+
+.modal#clearHistoryModal .modal-title .fa-exclamation-triangle {
+    color: #ffc107 !important;
+    margin-right: 10px !important;
+}
+
+.modal#clearHistoryModal .modal-body {
+    background: #ffffff !important;
+    color: #333333 !important;
+    padding: 1.5rem !important;
+}
+
+.modal#clearHistoryModal .modal-footer {
+    background: #ffffff !important;
+    border-top: 1px solid #dee2e6 !important;
+    padding: 1rem !important;
+    border-bottom-left-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+}
+
+.modal#clearHistoryModal .close {
+    color: #ffffff !important;
+    opacity: 0.8 !important;
+    text-shadow: none !important;
+    margin: -0.5rem -0.5rem -0.5rem auto !important;
+}
+
+.modal#clearHistoryModal .close:hover {
+    opacity: 1 !important;
+}
+
+/* ...existing code... */
+
+/* Toast Container and Notifications */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1070;
+}
+
+.toast {
+    min-width: 250px;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    margin-bottom: 0.75rem;
+}
+
+.toast .toast-header {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.toast .toast-body {
+    padding: 1rem;
+    color: #333333;
+    font-size: 0.95rem;
+}
+
+/* Toast Header Types */
+.toast .toast-header.bg-success {
+    background-color: #28a745 !important;
+    color: #ffffff;
+}
+
+.toast .toast-header.bg-danger {
+    background-color: #dc3545 !important;
+    color: #ffffff;
+}
+
+.toast .toast-header.bg-info {
+    background-color: #17a2b8 !important;
+    color: #ffffff;
+}
+
+.toast .toast-header.bg-warning {
+    background-color: #ffc107 !important;
+    color: #000000;
+}
+
+/* Toast Close Button */
+.toast .close {
+    color: inherit;
+    text-shadow: none;
+    opacity: 0.8;
+}
+
+.toast .close:hover {
+    opacity: 1;
+}
+
+/* Toast Message Types */
+.toast.bg-success .toast-body {
+    color: #155724;
+    background-color: #d4edda;
+}
+
+.toast.bg-danger .toast-body {
+    color: #721c24;
+    background-color: #f8d7da;
+}
+
+.toast.bg-info .toast-body {
+    color: #0c5460;
+    background-color: #d1ecf1;
+}
+
+.toast.bg-warning .toast-body {
+    color: #856404;
+    background-color: #fff3cd;
+}
+
+/* ...existing code... */
+
+/* Cost Modal Styles */
+
+#costModal .modal-content {
+    
+    color: #ffffff;
+}
+
+#costModal .modal-header {
+    background: none;
+    border-bottom: 1px solid #454d55;
+}
+
+#costModal .modal-title {
+    background: none;
+    color: white;
+    padding: 10px;
+    width: 100%;
+}
+#costModal .cost-info {
+    text-align: center;
+    padding: 2rem;
+}
+
+#costModal .current-cost h2 {
+    font-size: 3rem;
+    margin: 0;
+    color: #00ff88;
+    font-weight: 600;
+    margin-top: -10px;
+}
+
+#costModal .cost-details {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1rem; 
+}
+
+#costModal .cost-details h5 {
+    color: #ffffff;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+#small .cost-details p {
+    color: #00ff88;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+#costModal #cost-date {
+    color: #ffffff !important;
+    opacity: 1;
+}
+
+/* This overrides Bootstrap's text-muted class */
+#costModal .text-muted {
+    color: #ffffff !important;
 }

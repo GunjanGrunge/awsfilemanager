@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Manager</title>
+    <title>AWS File Manager</title>
+    <!-- External Scripts -->
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1001.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/oidc-client-ts@1.11.5/dist/oidc-client-ts.min.js"></script>
-    <!-- Remove the old Firebase scripts -->
-    <!-- Add these new Firebase script imports -->
+    
+    <!-- Firebase Configuration -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } 
@@ -19,21 +19,22 @@
         window.signOut = signOut;
         window.onAuthStateChanged = onAuthStateChanged;
     </script>
-    <!-- Include Google Font -->
+    
+    <!-- Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
-    <!-- Include Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
     <!-- Login Container -->
     <div class="login-container" id="login-container">
-        <h2>Login</h2>
+        <h2>Login to File Manager</h2>
         <div class="alert alert-danger d-none" id="login-error-message" role="alert">
-            Invalid username or password.
+            Invalid username or password
         </div>
         <form id="login-form">
             <div class="form-group">
@@ -46,11 +47,40 @@
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
+        <div class="mt-3 text-center">
+            <a href="#" id="forgot-password-link">Forgot Password?</a>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgotPasswordModalLabel">Reset Password</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger d-none" id="forgot-password-error" role="alert"></div>
+                    <div class="alert alert-success d-none" id="forgot-password-success" role="alert"></div>
+                    <form id="forgot-password-form">
+                        <div class="form-group">
+                            <label for="reset-email">Email address</label>
+                            <input type="email" class="form-control" id="reset-email" required>
+                            <small class="form-text text-muted">Enter your email address to receive a password reset link.</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Reset Link</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Main UI Container -->
     <div id="main-ui" class="d-none">
-        <!-- Navbar -->
+        <!-- Navigation -->
         <nav class="navbar navbar-expand-lg navbar-dark">
             <a class="navbar-brand" href="#">File Manager</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,9 +92,6 @@
                         <a class="nav-link" href="#" id="home-link">Home <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" id="s3-info-link">S3 Info</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="#" id="folders-link">Folders</a>
                     </li>
                     <li class="nav-item">
@@ -74,9 +101,6 @@
                         <a class="nav-link" href="#" id="cost-link">Cost</a>
                     </li>
                 </ul>
-                <span class="navbar-text mx-auto">
-                    powered by <img src="src/Amazon_Web_Services-Logo.wine.png" alt="AWS Logo" style="height: 30px; vertical-align: middle;">
-                </span>
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
                         <span class="navbar-text" id="username">Username</span>
@@ -88,19 +112,31 @@
             </div>
         </nav>
 
-        <!-- Upload Folder Section -->
+        <!-- Upload Section -->
         <div class="container mt-4 upload-section">
             <div class="alert alert-danger d-none" id="error-message" role="alert">
-                Please Select A Folder
+                Please select a folder
             </div>
-            <div class="form-group">
-                <label for="folder-upload" class="audiowide-regular">Upload Folder</label>
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="folder-upload" webkitdirectory directory multiple>
-                    <label class="custom-file-label" for="folder-upload">Choose folder...</label>
+            <div class="upload-area drop-zone" id="upload-area">
+                <div class="drop-zone__prompt">
+                    <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                    <p>Drag & drop folder here or click to browse</p>
+                    <small class="text-muted">Supported: Folders only</small>
                 </div>
+                <input type="file" id="folder-upload" 
+                       webkitdirectory mozdirectory directory multiple
+                       class="drop-zone__input" 
+                       style="display: none;">
             </div>
-            <button id="upload-button" class="btn btn-warning">Upload</button>
+            <div id="upload-list" class="upload-list d-none">
+                <h6>Selected Folder Contents:</h6>
+                <ul class="list-group" id="selected-files"></ul>
+            </div>
+            <div class="text-center mt-3">
+                <button id="upload-button" class="btn btn-warning" disabled>
+                    <i class="fas fa-upload mr-2"></i>Upload
+                </button>
+            </div>
             <div class="progress mt-3 d-none" id="upload-progress">
                 <div class="progress-bar progress-bar-striped progress-bar-animated" 
                      role="progressbar" 
@@ -111,7 +147,7 @@
             </div>
         </div>
 
-        <!-- Replace the Folders and Files Table section -->
+        <!-- Folders Section -->
         <div class="container mt-4 d-none" id="folders-section">
             <div class="card">
                 <div class="card-header bg-dark text-white">
@@ -132,7 +168,7 @@
                                     <th style="width: 50px"></th>
                                     <th>Name</th>
                                     <th style="width: 120px">Size</th>
-                                    <th style="width: 160px">Last Modified</th>
+                            
                                     <th style="width: 120px">Actions</th>
                                 </tr>
                             </thead>
@@ -145,7 +181,7 @@
             </div>
         </div>
 
-        <!-- History Table -->
+        <!-- History Section -->
         <div class="container mt-4 d-none" id="history-section">
             <h2 class="audiowide-regular">History</h2>
             <table class="table table-striped">
@@ -161,53 +197,44 @@
                     <!-- History contents will be displayed here -->
                 </tbody>
             </table>
-            <button id="clear-history-button" class="btn btn-danger mb-3">Clear History</button>
-        </div>
-
-        <!-- Remove the cost section -->
-
-        <!-- Update the S3 Info Modal -->
-        <div class="modal fade" id="s3InfoModal" tabindex="-1" role="dialog" aria-labelledby="s3InfoModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="s3InfoModalLabel">S3 Bucket Details</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" tabindex="0">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="s3-info-content">
-                            <!-- S3 info content will be dynamically inserted here -->
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Toast Container -->
-        <div aria-live="polite" aria-atomic="true" class="toast-container">
-            <div id="toast-container" class="position-fixed top-0 right-0 p-3" style="z-index: 1050;"></div>
+            <button class="btn btn-danger" id="clear-history-button">Clear History</button>
         </div>
     </div>
 
-    <!-- Add Cost Modal before the closing body tag -->
-    <div class="modal fade" id="costModal" tabindex="-1" aria-labelledby="costModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <!-- Toast Container - Move this outside of main-ui -->
+    <div aria-live="polite" aria-atomic="true" class="toast-container">
+        <div id="toast-container"></div>
+    </div>
+
+    <!-- Cost Modal -->
+    <div class="modal fade" id="costModal" tabindex="-1" role="dialog" aria-labelledby="costModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="costModalLabel">AWS Cost Overview</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title" id="costModalLabel">
+                        <i class="fas fa-coins mr-2"></i>AWS Cost Overview
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div id="cost-details">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="sr-only">Loading...</span>
+                    <div class="cost-info">
+                        <div class="current-cost">
+                            <h2>$<span id="current-cost">0.00</span></h2>
+                            <small class="text-muted" id="cost-date">As of today</small>
+                        </div>
+                        <div class="cost-details mt-4">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h5>Storage</h5>
+                                    <p>$<span id="storage-cost">0.00</span></p>
+                                </div>
+                                <div class="col-6">
+                                    <h5>Transfer</h5>
+                                    <p>$<span id="transfer-cost">0.00</span></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -218,9 +245,21 @@
         </div>
     </div>
 
-    <!-- Include jQuery and Bootstrap JS -->
+    <!-- Footer -->
+    <footer class="fixed-bottom text-white p-2">
+        <div class="d-flex align-items-center justify-content-start px-3">
+            <span class="mr-2">Powered by</span>
+            <img src="src/Amazon_Web_Services-Logo.wine.png" alt="AWS Logo" height="30">
+        </div>
+    </footer>
+
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="dist/bundle.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import config from './config.js';
+        window.appConfig = config;
+    </script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
