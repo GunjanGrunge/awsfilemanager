@@ -6,7 +6,7 @@ frontend:
         - npm ci
     build:
       commands:
-        - "echo \"const CONFIG = {\" > config.js"
+        - "echo \"const config = {\" > config.js"
         - "echo \"  AWS_ACCESS_KEY_ID: '$AWS_ACCESS_KEY_ID',\" >> config.js"
         - "echo \"  AWS_SECRET_ACCESS_KEY: '$AWS_SECRET_ACCESS_KEY',\" >> config.js"
         - "echo \"  AWS_REGION: '$AWS_REGION',\" >> config.js"
