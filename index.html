@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AWS File Manager</title>
+    <!-- Add Favicon -->
+    <link rel="icon" type="image/x-icon" href="src/favicon.ico">
     <!-- External Scripts -->
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1001.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
@@ -82,36 +84,57 @@
     <div id="main-ui" class="d-none">
         <!-- Navigation -->
         <nav class="navbar navbar-expand-lg navbar-dark">
-            <a class="navbar-brand" href="#">File Manager</a>
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="src/aws-s3.png" alt="AWS S3 Logo" class="navbar-logo mr-2">
+                <div class="d-flex flex-column">
+                    <span class="navbar-title">File Manager</span>
+                    <small class="navbar-subtitle">AWS S3 Storage</small>
+                </div>
+            </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href="#" id="home-link">Home <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="#" id="home-link">
+                            <i class="fas fa-home mr-2"></i>Home 
+                            <span class="sr-only">(current)</span>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" id="folders-link">Folders</a>
+                        <a class="nav-link" href="#" id="folders-link">
+                            <i class="fas fa-folder mr-2"></i>Folders
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" id="history-link">History</a>
+                        <a class="nav-link" href="#" id="history-link">
+                            <i class="fas fa-history mr-2"></i>History
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" id="cost-link">Cost</a>
+                        <a class="nav-link" href="#" id="cost-link">
+                            <i class="fas fa-coins mr-2"></i>Cost
+                        </a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-user mr-2"></i><span id="display-name">Username</span>
+                            <i class="fas fa-user-circle mr-2"></i><span id="display-name">Username</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                            <a class="dropdown-item" href="#" id="update-profile-link">Update Profile</a>
-                            <a class="dropdown-item" href="#" id="change-password-link">Change Password</a>
+                            <a class="dropdown-item" href="#" id="update-profile-link">
+                                <i class="fas fa-user-edit mr-2"></i>Update Profile
+                            </a>
+                            <a class="dropdown-item" href="#" id="change-password-link">
+                                <i class="fas fa-key mr-2"></i>Change Password
+                            </a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#" id="logout-button">Logout</a>
+                            <a class="dropdown-item" href="#" id="logout-button">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </a>
                         </div>
                     </li>
                 </ul>
@@ -145,6 +168,16 @@
             </div>
             <div class="progress mt-3 d-none" id="upload-progress">
                 <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                     role="progressbar" 
+                     style="width: 0%;" 
+                     aria-valuenow="0" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100">0%</div>
+            </div>
+            
+            <!-- Add Download Progress Bar -->
+            <div class="progress mt-3 d-none" id="download-progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" 
                      role="progressbar" 
                      style="width: 0%;" 
                      aria-valuenow="0" 

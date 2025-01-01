@@ -25,6 +25,50 @@ body {
     color: #e0e0e0 !important;
 }
 
+/* Navbar Icon Styles */
+.navbar .nav-link i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.navbar .nav-link:hover i {
+    transform: scale(1.1);
+}
+
+.navbar .dropdown-item i {
+    width: 20px;
+    text-align: center;
+    color: #2c3e50;
+}
+
+.navbar .active .nav-link i {
+    color: #00c6ff;
+}
+
+/* User Dropdown Styles */
+#userDropdown i.fa-user-circle {
+    font-size: 1.3rem;
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    background: #ffffff;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
 /* Login Container */
 .login-container {
     max-width: 400px;
@@ -1347,6 +1391,64 @@ body, .navbar, .modal-title {
 /* Adjust other modal titles to be consistent */
 .modal-title {
     background: none !important;  /* Remove background from all modal titles */
+}
+
+/* ...existing code... */
+
+/* Navbar Logo and Branding */
+.navbar-brand {
+    display: flex;
+    align-items: center; /* Align logo and text vertically */
+    gap: 2px; /* Add spacing between logo and text */
+}
+.navbar-logo {
+    height: 75px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover .navbar-logo {
+    transform: scale(1.1); /* Slightly larger on hover */
+}
+
+.navbar-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    line-height: 1.2;
+    color: #146eb4;
+}
+
+.navbar-subtitle {
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    letter-spacing: 0.5px;
+
+
+}
+
+/* ...existing code... */
+
+/* Progress Bar Styles */
+.progress {
+    height: 25px;
+    border-radius: 12px;
+    margin-top: 20px;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+    font-size: 0.9rem;
+    line-height: 25px;
+    font-weight: 600;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+#upload-progress .progress-bar {
+    background-color: #28a745;
+}
+
+#download-progress .progress-bar {
+    background-color: #17a2b8;
 }
 
 /* ...existing code... */
