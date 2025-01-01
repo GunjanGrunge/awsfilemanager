@@ -1,0 +1,32 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        # Install dependencies if needed (e.g., npm install if using npm)
+        - npm ci # Replace with yarn install if you're using Yarn
+    build:
+      commands:
+        # Inject environment variables into a config.js file
+        - echo "const CONFIG = {" > src/config.js
+        - echo "  AWS_ACCESS_KEY_ID: '$AWS_ACCESS_KEY_ID'," >> src/config.js
+        - echo "  AWS_SECRET_ACCESS_KEY: '$AWS_SECRET_ACCESS_KEY'," >> src/config.js
+        - echo "  AWS_REGION: '$AWS_REGION'," >> src/config.js
+        - echo "  AWS_BUCKET_NAME: '$AWS_BUCKET_NAME'," >> src/config.js
+        - echo "  FIREBASE_API_KEY: '$FIREBASE_API_KEY'," >> src/config.js
+        - echo "  FIREBASE_AUTH_DOMAIN: '$FIREBASE_AUTH_DOMAIN'," >> src/config.js
+        - echo "  FIREBASE_PROJECT_ID: '$FIREBASE_PROJECT_ID'," >> src/config.js
+        - echo "  FIREBASE_STORAGE_BUCKET: '$FIREBASE_STORAGE_BUCKET'," >> src/config.js
+        - echo "  FIREBASE_MESSAGING_SENDER_ID: '$FIREBASE_MESSAGING_SENDER_ID'," >> src/config.js
+        - echo "  FIREBASE_APP_ID: '$FIREBASE_APP_ID'" >> src/config.js
+        - echo "};" >> src/config.js
+        # Build your application (e.g., npm build)
+        - npm run build # Replace with your build command if different
+  artifacts:
+    # Specify the directory where your built files are located
+    baseDirectory: build # Replace with the directory containing your built app
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/* # Cache dependencies to speed up builds
