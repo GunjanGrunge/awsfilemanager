@@ -3,27 +3,23 @@ frontend:
   phases:
     preBuild:
       commands:
-        # Install dependencies
         - npm ci
     build:
       commands:
-        # Inject environment variables into a config.js file in the root folder
         - echo "const CONFIG = {" > config.js
-        - echo "  AWS_ACCESS_KEY_ID: '$AWS_ACCESS_KEY_ID'," >> config.js
-        - echo "  AWS_SECRET_ACCESS_KEY: '$AWS_SECRET_ACCESS_KEY'," >> config.js
-        - echo "  AWS_REGION: '$AWS_REGION'," >> config.js
-        - echo "  AWS_BUCKET_NAME: '$AWS_BUCKET_NAME'," >> config.js
-        - echo "  FIREBASE_API_KEY: '$FIREBASE_API_KEY'," >> config.js
-        - echo "  FIREBASE_AUTH_DOMAIN: '$FIREBASE_AUTH_DOMAIN'," >> config.js
-        - echo "  FIREBASE_PROJECT_ID: '$FIREBASE_PROJECT_ID'," >> config.js
-        - echo "  FIREBASE_STORAGE_BUCKET: '$FIREBASE_STORAGE_BUCKET'," >> config.js
-        - echo "  FIREBASE_MESSAGING_SENDER_ID: '$FIREBASE_MESSAGING_SENDER_ID'," >> config.js
-        - echo "  FIREBASE_APP_ID: '$FIREBASE_APP_ID'" >> config.js
+        - echo "  AWS_ACCESS_KEY_ID: \"$AWS_ACCESS_KEY_ID\"," >> config.js
+        - echo "  AWS_SECRET_ACCESS_KEY: \"$AWS_SECRET_ACCESS_KEY\"," >> config.js
+        - echo "  AWS_REGION: \"$AWS_REGION\"," >> config.js
+        - echo "  AWS_BUCKET_NAME: \"$AWS_BUCKET_NAME\"," >> config.js
+        - echo "  FIREBASE_API_KEY: \"$FIREBASE_API_KEY\"," >> config.js
+        - echo "  FIREBASE_AUTH_DOMAIN: \"$FIREBASE_AUTH_DOMAIN\"," >> config.js
+        - echo "  FIREBASE_PROJECT_ID: \"$FIREBASE_PROJECT_ID\"," >> config.js
+        - echo "  FIREBASE_STORAGE_BUCKET: \"$FIREBASE_STORAGE_BUCKET\"," >> config.js
+        - echo "  FIREBASE_MESSAGING_SENDER_ID: \"$FIREBASE_MESSAGING_SENDER_ID\"," >> config.js
+        - echo "  FIREBASE_APP_ID: \"$FIREBASE_APP_ID\"" >> config.js
         - echo "};" >> config.js
-        # Build your application
         - npm run build
   artifacts:
-    # Specify the directory containing the built files
     baseDirectory: build
     files:
       - '**/*'
