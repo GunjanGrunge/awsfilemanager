@@ -18,9 +18,8 @@ frontend:
         - echo "  FIREBASE_MESSAGING_SENDER_ID: \"$FIREBASE_MESSAGING_SENDER_ID\"," >> config.js
         - echo "  FIREBASE_APP_ID: \"$FIREBASE_APP_ID\"" >> config.js
         - echo "};" >> config.js
-        - npm run build
   artifacts:
-    baseDirectory: build
+    baseDirectory: .
     files:
       - '**/*'
   cache:
