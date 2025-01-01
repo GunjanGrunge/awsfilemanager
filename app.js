@@ -71,6 +71,27 @@ async function loadHistory() {
     }
 }
 
+// Add this function near the top with other helper functions
+function formatDateToCustomString(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString('en-US', { month: 'short' });
+    const year = date.getFullYear();
+    
+    // Add ordinal suffix to day
+    const ordinal = (day) => {
+        if (day > 3 && day < 21) return 'th';
+        switch (day % 10) {
+            case 1: return 'st';
+            case 2: return 'nd';
+            case 3: return 'rd';
+            default: return 'th';
+        }
+    };
+
+    return `${day}${ordinal(day)} ${month} ${year}`;
+}
+
 // Add updateHistoryUI function near the top with other global functions
 function updateHistoryUI(historyData) {
     const historyContents = document.getElementById('history-contents');
@@ -81,7 +102,7 @@ function updateHistoryUI(historyData) {
     
     historyContents.innerHTML = historyData.map(item => `
         <tr>
-            <td>${item.date}</td>
+            <td>${formatDateToCustomString(item.date)}</td>
             <td>${item.action}</td>
             <td>${(item.size / (1024 * 1024)).toFixed(2)} MB</td>
             <td>${item.fileCount}</td>
@@ -472,21 +493,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Function to update history
     async function updateHistory(action, size, fileCount) {
-        const date = new Date().toLocaleString();
-        history.push({ date, action, size, fileCount });
-        const historyContents = document.getElementById('history-contents');
-        if (historyContents) {
-            historyContents.innerHTML = history.map(item => `
-                <tr>
-                    <td>${item.date}</td>
-                    <td>${item.action}</td>
-                    <td>${(item.size / (1024 * 1024)).toFixed(2)} MB</td>
-                    <td>${item.fileCount}</td>
-                </tr>
-            `).join('');
-        } else {
-            console.error('Element not found');
-        }
+        const currentDate = new Date().toISOString(); // Store full ISO date string
+        history.push({ date: currentDate, action, size, fileCount });
+        updateHistoryUI(history);
 
         // Save history to S3
         const params = {
@@ -506,7 +515,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (historyContents) {
             historyContents.innerHTML = historyData.map(item => `
                 <tr>
-                    <td>${item.date}</td>
+                    <td>${formatDateToCustomString(item.date)}</td>
                     <td>${item.action}</td>
                     <td>${(item.size / (1024 * 1024)).toFixed(2)} MB</td>
                     <td>${item.fileCount}</td>
@@ -586,42 +595,58 @@ document.addEventListener('DOMContentLoaded', async function() {
         const uploadProgress = {
             total: files.length,
             current: 0,
-            size: 0
+            size: 0,
+            totalBytes: 0,
+            uploadedBytes: 0
         };
+
+        // Calculate total size first
+        for (const file of files) {
+            uploadProgress.totalBytes += file.size;
+        }
 
         const progressBar = document.getElementById('upload-progress');
         const progressBarInner = progressBar.querySelector('.progress-bar');
+        progressBar.classList.remove('d-none');
 
-        for (const file of files) {
-            try {
+        try {
+            for (const file of files) {
                 const key = currentPrefix + (file.webkitRelativePath || file.name);
                 const params = {
                     Bucket: window.appConfig.AWS_BUCKET_NAME,
                     Key: key,
                     Body: file,
-                    ContentType: file.type
+                    ContentType: file.type || 'application/octet-stream'
                 };
 
-                await s3.upload(params).on('httpUploadProgress', (progress) => {
-                    const percent = Math.round((progress.loaded / progress.total) * 100);
-                    progressBarInner.style.width = `${percent}%`;
-                    progressBarInner.textContent = `${percent}%`;
-                }).promise();
+                await s3.upload(params)
+                    .on('httpUploadProgress', (progress) => {
+                        if (progress.total) {
+                            // Update current file progress
+                            const currentFileProgress = Math.round((progress.loaded / progress.total) * 100);
+                            
+                            // Update total progress
+                            uploadProgress.uploadedBytes = uploadProgress.size + progress.loaded;
+                            const totalProgress = Math.round((uploadProgress.uploadedBytes / uploadProgress.totalBytes) * 100);
+                            
+                            progressBarInner.style.width = `${totalProgress}%`;
+                            progressBarInner.textContent = `Uploading: ${totalProgress}% (File ${uploadProgress.current + 1}/${files.length})`;
+                        }
+                    })
+                    .promise();
 
                 uploadProgress.current++;
                 uploadProgress.size += file.size;
-                
-                // Update progress every 5 files
-                if (uploadProgress.current % 5 === 0) {
-                    showToast(`Uploaded ${uploadProgress.current} of ${uploadProgress.total} files`, 'info');
-                }
-            } catch (error) {
-                console.error(`Error uploading file ${file.name}:`, error);
-                showToast(`Failed to upload ${file.name}`, 'danger');
             }
+            
+            return uploadProgress;
+        } catch (error) {
+            throw error;
+        } finally {
+            progressBar.classList.add('d-none');
+            progressBarInner.style.width = '0%';
+            progressBarInner.textContent = '';
         }
-
-        return uploadProgress;
     }
 
     // Navigation and download handlers
@@ -631,64 +656,142 @@ document.addEventListener('DOMContentLoaded', async function() {
             await fetchS3Contents(prefix);
         } else if (event.target.classList.contains('download-button')) {
             const key = event.target.getAttribute('data-key');
+            const fileName = key.split('/').pop();
             try {
-                const data = await s3.getObject({
-                    Bucket: window.appConfig.AWS_BUCKET_NAME,
-                    Key: key
-                }).promise();
-
-                const blob = new Blob([data.Body]);
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = key.split('/').pop();
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-
-                await updateHistory('Download', data.ContentLength, 1);
+                await downloadFileWithProgress(key, fileName);
             } catch (err) {
-                console.error('Error downloading file:', err);
-                showToast('Error downloading file. Please check console for details.', 'danger');
+                console.error('Error in download handler:', err);
             }
         } else if (event.target.classList.contains('download-folder-button')) {
             const prefix = event.target.getAttribute('data-prefix');
             try {
-                const params = {
-                    Bucket: window.appConfig.AWS_BUCKET_NAME,
-                    Prefix: prefix
-                };
-                const data = await s3.listObjectsV2(params).promise();
-                const zip = new JSZip();
-                let totalSize = 0;
-
-                for (const item of data.Contents) {
-                    const fileData = await s3.getObject({
-                        Bucket: window.appConfig.AWS_BUCKET_NAME,
-                        Key: item.Key
-                    }).promise();
-                    zip.file(item.Key.replace(prefix, ''), fileData.Body);
-                    totalSize += fileData.ContentLength;
-                }
-
-                const content = await zip.generateAsync({ type: 'blob' });
-                const url = window.URL.createObjectURL(content);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${prefix.split('/').slice(-2, -1)[0]}.zip`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-
-                await updateHistory('Download', totalSize, data.Contents.length);
+                await downloadFolderWithProgress(prefix);
             } catch (err) {
-                console.error('Error downloading folder:', err);
-                showToast('Error downloading folder. Please check console for details.', 'danger');
+                console.error('Error in folder download handler:', err);
             }
         }
     });
+
+    // Function to handle file downloads with progress tracking
+    async function downloadFileWithProgress(key, fileName) {
+        const progressBar = document.getElementById('download-progress');
+        const progressBarInner = progressBar.querySelector('.progress-bar');
+        progressBar.classList.remove('d-none');
+
+        try {
+            const headParams = {
+                Bucket: window.appConfig.AWS_BUCKET_NAME,
+                Key: key
+            };
+
+            // Get file size first
+            const headData = await s3.headObject(headParams).promise();
+            const totalSize = headData.ContentLength;
+
+            // Download the file
+            const data = await s3.getObject(headParams)
+                .on('httpDownloadProgress', (progress) => {
+                    const percent = Math.round((progress.loaded / totalSize) * 100);
+                    progressBarInner.style.width = `${percent}%`;
+                    progressBarInner.textContent = `Downloading: ${percent}%`;
+                })
+                .promise();
+
+            // Create and trigger download
+            const blob = new Blob([data.Body]);
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+            await updateHistory('Download', totalSize, 1);
+            showToast('Download completed successfully!', 'success');
+        } catch (error) {
+            console.error('Error downloading file:', error);
+            showToast('Error downloading file', 'danger');
+            throw error;
+        } finally {
+            progressBar.classList.add('d-none');
+            progressBarInner.style.width = '0%';
+            progressBarInner.textContent = '';
+        }
+    }
+
+    // Function to handle folder downloads with progress tracking
+    async function downloadFolderWithProgress(prefix) {
+        const progressBar = document.getElementById('download-progress');
+        const progressBarInner = progressBar.querySelector('.progress-bar');
+        progressBar.classList.remove('d-none');
+
+        try {
+            const params = {
+                Bucket: window.appConfig.AWS_BUCKET_NAME,
+                Prefix: prefix
+            };
+
+            const data = await s3.listObjectsV2(params).promise();
+            const zip = new JSZip();
+            let totalSize = 0;
+            let downloadedSize = 0;
+
+            // Calculate total size first
+            for (const item of data.Contents) {
+                totalSize += item.Size;
+            }
+
+            // Download and add each file to zip
+            for (const item of data.Contents) {
+                const fileData = await s3.getObject({
+                    Bucket: window.appConfig.AWS_BUCKET_NAME,
+                    Key: item.Key
+                })
+                .on('httpDownloadProgress', (progress) => {
+                    downloadedSize += progress.loaded;
+                    const percent = Math.round((downloadedSize / totalSize) * 100);
+                    progressBarInner.style.width = `${percent}%`;
+                    progressBarInner.textContent = `Creating Zip: ${percent}%`;
+                })
+                .promise();
+
+                zip.file(item.Key.replace(prefix, ''), fileData.Body);
+            }
+
+            progressBarInner.textContent = 'Generating zip file...';
+            const content = await zip.generateAsync({ 
+                type: 'blob',
+                compression: 'DEFLATE',
+                compressionOptions: { level: 6 }
+            }, (metadata) => {
+                const percent = Math.round(metadata.percent);
+                progressBarInner.style.width = `${percent}%`;
+                progressBarInner.textContent = `Compressing: ${percent}%`;
+            });
+
+            const url = window.URL.createObjectURL(content);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${prefix.split('/').slice(-2, -1)[0]}.zip`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+            await updateHistory('Download', totalSize, data.Contents.length);
+            showToast('Folder download completed successfully!', 'success');
+        } catch (error) {
+            console.error('Error downloading folder:', error);
+            showToast('Error downloading folder', 'danger');
+            throw error;
+        } finally {
+            progressBar.classList.add('d-none');
+            progressBarInner.style.width = '0%';
+            progressBarInner.textContent = '';
+        }
+    }
 
     // Navigate Up button handler
     const navigateUpButton = document.getElementById('navigate-up-button');
@@ -1212,15 +1315,23 @@ document.addEventListener('DOMContentLoaded', async function() {
         const uploadProgress = {
             total: files.length,
             current: 0,
-            size: 0
+            size: 0,
+            totalBytes: 0,
+            uploadedBytes: 0
         };
+
+        // Calculate total size first
+        for (const file of files) {
+            uploadProgress.totalBytes += file.size;
+        }
 
         const progressBar = document.getElementById('upload-progress');
         const progressBarInner = progressBar.querySelector('.progress-bar');
+        progressBar.classList.remove('d-none');
 
         try {
             for (const file of files) {
-                const key = file.webkitRelativePath;
+                const key = currentPrefix + (file.webkitRelativePath || file.name);
                 const params = {
                     Bucket: window.appConfig.AWS_BUCKET_NAME,
                     Key: currentPrefix + key,
@@ -1243,6 +1354,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             return uploadProgress;
         } catch (error) {
             throw error;
+        } finally {
+            progressBar.classList.add('d-none');
+            progressBarInner.style.width = '0%';
+            progressBarInner.textContent = '';
         }
     }
 
