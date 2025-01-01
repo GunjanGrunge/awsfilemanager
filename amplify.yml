@@ -3,10 +3,10 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm ci
+        - npm install
     build:
       commands:
-        - "echo \"const config = {\" > config.js"
+        - "echo \"window.appConfig = {\" > config.js"
         - "echo \"  AWS_ACCESS_KEY_ID: '$AWS_ACCESS_KEY_ID',\" >> config.js"
         - "echo \"  AWS_SECRET_ACCESS_KEY: '$AWS_SECRET_ACCESS_KEY',\" >> config.js"
         - "echo \"  AWS_REGION: '$AWS_REGION',\" >> config.js"
