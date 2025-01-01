@@ -1,4 +1,3 @@
-import { CONFIG } from './config';// Updated showToast function with better styling
 function showToast(message, type = 'info', duration = 3000) {
     const toastId = `toast-${Date.now()}`;
     const toastHTML = `
