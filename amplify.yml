@@ -3,8 +3,8 @@ frontend:
   phases:
     preBuild:
       commands:
-        # Install dependencies if needed (e.g., npm install if using npm)
-        - npm ci # Replace with yarn install if you're using Yarn
+        # Install dependencies
+        - npm ci
     build:
       commands:
         # Inject environment variables into a config.js file
@@ -19,14 +19,14 @@ frontend:
         - echo "  FIREBASE_STORAGE_BUCKET: '$FIREBASE_STORAGE_BUCKET'," >> src/config.js
         - echo "  FIREBASE_MESSAGING_SENDER_ID: '$FIREBASE_MESSAGING_SENDER_ID'," >> src/config.js
         - echo "  FIREBASE_APP_ID: '$FIREBASE_APP_ID'" >> src/config.js
-        - echo "};" >> src/config.js
-        # Build your application (e.g., npm build)
-        - npm run build # Replace with your build command if different
+        - echo "};" >> config.js
+        # Build your application
+        - npm run build
   artifacts:
-    # Specify the directory where your built files are located
-    baseDirectory: build # Replace with the directory containing your built app
+    # Specify the directory containing the built files
+    baseDirectory: build
     files:
       - '**/*'
   cache:
     paths:
-      - node_modules/**/* # Cache dependencies to speed up builds
+      - node_modules/**/*
