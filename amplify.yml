@@ -7,7 +7,6 @@ frontend:
     build:
       commands:
         - echo "Building with environment variables"
-        - node -e "console.log('AWS_BUCKET_NAME:', process.env.AWS_BUCKET_NAME)"
         - |
           echo "window.appConfig = {
             \"AWS_REGION\": \"${AWS_REGION}\",
