@@ -12,5 +12,5 @@ const appConfig = {
       appId: window.appConfig.FIREBASE_CONFIG.appId,
     },
   };
-
-window.appConfig = appConfig;
+  
+  export default config;
