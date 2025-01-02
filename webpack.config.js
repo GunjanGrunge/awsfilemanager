@@ -15,6 +15,9 @@ module.exports = {
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
+        generator: {
+          filename: 'images/[hash][ext][query]'
+        }
       }
     ]
   },
@@ -25,12 +28,21 @@ module.exports = {
     }
   },
   externals: {
-    'firebase/auth': 'firebase',
-    'firebase/app': 'firebase'
+    'firebase': 'firebase',
+    'firebase/app': 'firebase',
+    'firebase/auth': 'firebase'
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'index.html')
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, 'src/images'),
+          to: 'images'
+        }
+      ]
     }),
     new webpack.DefinePlugin({
       'window.appConfig': JSON.stringify({
