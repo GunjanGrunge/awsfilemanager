@@ -1,3 +1,4 @@
+import config from './dist/config.js';
 function showToast(message, type = 'info', duration = 3000) {
     const toastId = `toast-${Date.now()}`;
     const toastHTML = `
