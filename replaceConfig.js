@@ -1,6 +1,7 @@
 // filepath: /c:/Users/Gunjan Sarkar/OneDrive/Desktop/Applications/awscongitoui/replaceConfig.js
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config(); // Load environment variables from .env
 
 const configPath = path.join(__dirname, 'config.js');
 const distPath = path.join(__dirname, 'dist', 'config.js');
