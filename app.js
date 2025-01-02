@@ -1,4 +1,5 @@
-import config from './dist/config.js';
+import config from './config.js';
+console.log('AWS Region:', window.appConfig.AWS_REGION);
 function showToast(message, type = 'info', duration = 3000) {
     const toastId = `toast-${Date.now()}`;
     const toastHTML = `
@@ -55,7 +56,16 @@ async function loadHistory() {
             Key: 'history-log.json'
         };
 
+        if (!s3) {
+            throw new Error('S3 client is not initialized');
+        }
+
         const data = await s3.getObject(params).promise();
+
+        if (!data.Body) {
+            throw new Error('No data returned from S3 for history-log.json');
+        }
+
         const historyData = JSON.parse(data.Body.toString());
         history = historyData;
         updateHistoryUI(historyData);
@@ -170,30 +180,34 @@ const setupModalHandlers = () => {
 // Rest of your existing code
 document.addEventListener('DOMContentLoaded', async function() {
     // Move AWS configuration to the top before any AWS service calls
-    const initAWS = () => {
+    const initAWS = async () => {
         try {
-            const config = window.appConfig;
+            if (!window.appConfig.AWS_REGION || !window.appConfig.AWS_ACCESS_KEY_ID || !window.appConfig.AWS_SECRET_ACCESS_KEY || !window.appConfig.AWS_BUCKET_NAME) {
+                throw new Error('AWS configuration is missing in appConfig');
+            }
+
             AWS.config.update({
-                region: config.AWS_REGION,
-                credentials: new AWS.Credentials({
-                    accessKeyId: config.AWS_ACCESS_KEY_ID,
-                    secretAccessKey: config.AWS_SECRET_ACCESS_KEY
-                })
+                region: window.appConfig.AWS_REGION,
+                accessKeyId: window.appConfig.AWS_ACCESS_KEY_ID,
+                secretAccessKey: window.appConfig.AWS_SECRET_ACCESS_KEY
             });
 
-            s3 = new AWS.S3({
-                apiVersion: '2006-03-01',
-                params: { Bucket: config.AWS_BUCKET_NAME },
-                signatureVersion: 'v4'
-            });
+            s3 = new AWS.S3();
+
+            console.log('AWS initialized successfully');
         } catch (error) {
             console.error('Error initializing AWS:', error);
-            throw new Error('Failed to initialize AWS configuration');
+            showToast('Failed to initialize AWS configuration', 'danger');
+            throw error; // Re-throw to handle upstream if necessary
         }
     };
 
     // Initialize AWS and get S3 instance
-    initAWS();
+    try {
+        await initAWS();
+    } catch (error) {
+        console.error('Error initializing app:', error);
+    }
 
     // Firebase configuration
     const firebaseConfig = window.appConfig.FIREBASE_CONFIG;
