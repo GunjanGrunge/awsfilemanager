@@ -18,6 +18,10 @@ module.exports = {
         generator: {
           filename: 'images/[hash][ext][query]'
         }
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
       }
     ]
   },
@@ -26,11 +30,6 @@ module.exports = {
       "path": false,
       "fs": false
     }
-  },
-  externals: {
-    'firebase': 'firebase',
-    'firebase/app': 'firebase',
-    'firebase/auth': 'firebase'
   },
   plugins: [
     new HtmlWebpackPlugin({
