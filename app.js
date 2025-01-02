@@ -14,7 +14,7 @@ function showToast(message, type = 'info', duration = 3000) {
             </div>
         </div>
     `;
-    
+   
     const toastContainer = document.getElementById('toast-container');
     if (!toastContainer) {
         console.error('Toast container not found');
@@ -23,14 +23,14 @@ function showToast(message, type = 'info', duration = 3000) {
 
     // Add the toast to the container
     toastContainer.insertAdjacentHTML('beforeend', toastHTML);
-    
+   
     // Initialize and show the toast
     const toastElement = document.getElementById(toastId);
     const bsToast = new bootstrap.Toast(toastElement, {
         autohide: true,
         delay: duration
     });
-    
+   
     bsToast.show();
 
     // Remove the toast after it's hidden
@@ -77,7 +77,7 @@ function formatDateToCustomString(dateString) {
     const day = date.getDate();
     const month = date.toLocaleString('en-US', { month: 'short' });
     const year = date.getFullYear();
-    
+   
     // Add ordinal suffix to day
     const ordinal = (day) => {
         if (day > 3 && day < 21) return 'th';
@@ -99,7 +99,7 @@ function updateHistoryUI(historyData) {
         console.error('History contents element not found');
         return;
     }
-    
+   
     historyContents.innerHTML = historyData.map(item => `
         <tr>
             <td>${formatDateToCustomString(item.date)}</td>
@@ -113,7 +113,7 @@ function updateHistoryUI(historyData) {
 // Single consolidated modal handler function
 const setupModalHandlers = () => {
     const modals = document.querySelectorAll('.modal');
-    
+   
     modals.forEach(modal => {
         if (!modal) return;
 
@@ -130,7 +130,7 @@ const setupModalHandlers = () => {
             modal.removeAttribute('aria-hidden');
             modal.setAttribute('aria-modal', 'true');
             modal.setAttribute('role', 'dialog');
-            
+           
             setTimeout(() => {
                 if (firstFocusable) {
                     firstFocusable.focus();
@@ -142,11 +142,11 @@ const setupModalHandlers = () => {
         $(modal).on('hidden.bs.modal', function() {
             modal.removeAttribute('aria-modal');
             modal.removeAttribute('role');
-            
+           
             if (previousActiveElement) {
                 previousActiveElement.focus();
             }
-            
+           
             cleanupModals();
         });
 
@@ -200,12 +200,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Initialize folderInput
     folderInput = document.getElementById('folder-upload');
-    
+   
     // Initialize Firebase with proper error handling
     try {
         const app = window.initializeApp(firebaseConfig);
         auth = window.getAuth(app); // Assign to global auth variable
-        
+       
         // Move the auth state observer inside the try block
         window.onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -233,11 +233,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('login-container').classList.add('d-none');
         document.getElementById('main-ui').classList.remove('d-none');
         document.getElementById('display-name').textContent = user.displayName || user.email || 'User';
-    
+   
         // Initialize the main UI components
         fetchS3Contents();
         loadHistory();
-        
+       
         // Show the folders section by default
         document.getElementById('folders-section').classList.remove('d-none');
         document.getElementById('history-section').classList.add('d-none');
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         event.preventDefault();
         const email = document.getElementById('login-username').value;
         const password = document.getElementById('login-password').value;
-        
+       
         try {
             document.getElementById('login-error-message').classList.add('d-none');
             const user = await handleLogin(email, password);
@@ -329,24 +329,24 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.error('Breadcrumb element not found');
             return;
         }
-    
+   
         const parts = prefix.split('/').filter(Boolean);
         let breadcrumbHTML = '<li class="breadcrumb-item"><a href="#" class="text-white" data-prefix="">Root</a></li>';
         let currentPath = '';
-        
+       
         parts.forEach((part, index) => {
             currentPath += part + '/';
             const isLast = index === parts.length - 1;
             breadcrumbHTML += `
                 <li class="breadcrumb-item ${isLast ? 'active' : ''}">
-                    ${isLast ? `<span class="text-info">${part}</span>` : 
+                    ${isLast ? `<span class="text-info">${part}</span>` :
                     `<a href="#" class="text-white" data-prefix="${currentPath}">${part}</a>`}
                 </li>
             `;
         });
-        
+       
         breadcrumb.innerHTML = breadcrumbHTML;
-        
+       
         // Add click handlers to breadcrumb links
         breadcrumb.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', (e) => {
@@ -380,13 +380,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         try {
             currentPrefix = prefix;
             updateBreadcrumb(prefix);
-            
+           
             const s3Contents = document.getElementById('s3-contents');
             if (!s3Contents) {
                 console.error('S3 contents element not found');
                 return;
             }
-    
+   
             // Show loading state
             s3Contents.innerHTML = `
                 <tr>
@@ -397,15 +397,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                     </td>
                 </tr>
             `;
-            
+           
             const params = {
                 Bucket: window.appConfig.AWS_BUCKET_NAME,
                 Prefix: prefix,
                 Delimiter: '/'
             };
-    
+   
             const data = await s3.listObjectsV2(params).promise();
-            
+           
             if (!data.Contents && !data.CommonPrefixes) {
                 s3Contents.innerHTML = `
                     <tr>
@@ -477,7 +477,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
 
             s3Contents.innerHTML = contentsHTML;
-            
+           
             // Add click handlers for folder navigation
             s3Contents.querySelectorAll('.folder-row a').forEach(link => {
                 link.addEventListener('click', (e) => {
@@ -507,7 +507,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         await s3.putObject(params).promise();
     }
 
-    
+   
 
     // Add helper function to update history UI
     function updateHistoryUI(historyData) {
@@ -624,11 +624,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                         if (progress.total) {
                             // Update current file progress
                             const currentFileProgress = Math.round((progress.loaded / progress.total) * 100);
-                            
+                           
                             // Update total progress
                             uploadProgress.uploadedBytes = uploadProgress.size + progress.loaded;
                             const totalProgress = Math.round((uploadProgress.uploadedBytes / uploadProgress.totalBytes) * 100);
-                            
+                           
                             progressBarInner.style.width = `${totalProgress}%`;
                             progressBarInner.textContent = `Uploading: ${totalProgress}% (File ${uploadProgress.current + 1}/${files.length})`;
                         }
@@ -638,7 +638,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 uploadProgress.current++;
                 uploadProgress.size += file.size;
             }
-            
+           
             return uploadProgress;
         } catch (error) {
             throw error;
@@ -761,7 +761,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
 
             progressBarInner.textContent = 'Generating zip file...';
-            const content = await zip.generateAsync({ 
+            const content = await zip.generateAsync({
                 type: 'blob',
                 compression: 'DEFLATE',
                 compressionOptions: { level: 6 }
@@ -861,13 +861,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                 </div>
             </div>
         `;
-        
+       
         // Remove any existing modal
         const existingModal = document.getElementById('clearHistoryModal');
         if (existingModal) {
             existingModal.remove();
         }
-        
+       
         document.body.insertAdjacentHTML('beforeend', clearHistoryModal);
         $('#clearHistoryModal').modal('show');
 
@@ -925,20 +925,20 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Hide all sections except upload section
         document.getElementById('folders-section').classList.add('d-none');
         document.getElementById('history-section').classList.add('d-none');
-        
+       
         // Show upload section
         document.querySelector('.upload-section').classList.remove('d-none');
-        
+       
         // Clear any active modals
         $('.modal').modal('hide');
         $('body').removeClass('modal-open');
         $('.modal-backdrop').remove();
-        
+       
         // Remove active class from all nav items
         document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('active');
         });
-        
+       
         // Add active class to home link
         this.parentElement.classList.add('active');
     });
@@ -949,13 +949,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('folders-section').classList.remove('d-none');
         document.getElementById('history-section').classList.add('d-none');
         document.querySelector('.upload-section').classList.add('d-none');
-        
+       
         // Update navigation active state
         document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('active');
         });
         this.parentElement.classList.add('active');
-        
+       
         // Refresh folders content
         fetchS3Contents(currentPrefix);
     });
@@ -966,7 +966,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('folders-section').classList.add('d-none');
         document.getElementById('history-section').classList.remove('d-none');
         document.querySelector('.upload-section').classList.add('d-none');
-        
+       
         // Update navigation active state
         document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('active');
@@ -985,33 +985,33 @@ document.addEventListener('DOMContentLoaded', async function() {
     function initializeDropZone() {
         const dropZone = document.querySelector('.drop-zone');
         const input = document.getElementById('folder-upload');
-        
+       
         if (!dropZone || !input) {
             console.error('Drop zone or input elements not found');
             return;
         }
-    
+   
         // Handle click to open folder dialog
         dropZone.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             input.click();
         });
-    
+   
         // Handle drag enter
         dropZone.addEventListener('dragenter', (e) => {
             e.preventDefault();
             e.stopPropagation();
             dropZone.classList.add('drop-zone--over');
         });
-    
+   
         // Handle drag over
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             e.stopPropagation();
             dropZone.classList.add('drop-zone--over');
         });
-    
+   
         // Handle drag leave
         dropZone.addEventListener('dragleave', (e) => {
             e.preventDefault();
@@ -1020,13 +1020,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                 dropZone.classList.remove('drop-zone--over');
             }
         });
-    
+   
         // Handle drop
         dropZone.addEventListener('drop', async (e) => {
             e.preventDefault();
             e.stopPropagation();
             dropZone.classList.remove('drop-zone--over');
-    
+   
             const items = Array.from(e.dataTransfer.items);
             for (const item of items) {
                 if (item.kind === 'file') {
@@ -1037,7 +1037,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
             }
         });
-    
+   
         // Handle folder selection
         input.addEventListener('change', (e) => {
             const files = Array.from(e.target.files);
@@ -1046,12 +1046,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
     }
-    
+   
     // Add new helper function for processing directory entries
     async function processDirectoryEntry(dirEntry, path = '') {
         const dirReader = dirEntry.createReader();
         const entries = await readAllDirectoryEntries(dirReader);
-        
+       
         for (const entry of entries) {
             if (entry.isFile) {
                 const file = await getFileFromEntry(entry);
@@ -1062,12 +1062,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         }
     }
-    
+   
     // Add helper function to read all directory entries
     function readAllDirectoryEntries(dirReader) {
         return new Promise((resolve) => {
             const entries = [];
-            
+           
             function readEntries() {
                 dirReader.readEntries((results) => {
                     if (results.length) {
@@ -1081,26 +1081,26 @@ document.addEventListener('DOMContentLoaded', async function() {
                     resolve(entries);
                 });
             }
-            
+           
             readEntries();
         });
     }
-    
+   
     // Update handleSelectedFiles function
     function handleSelectedFiles(files) {
         // Clear previous selections
         selectedFiles.clear();
         const uploadList = document.getElementById('selected-files');
         if (!uploadList) return;
-        
+       
         uploadList.innerHTML = '';
-        
+       
         files.forEach(file => {
             const path = file.webkitRelativePath || file.name;
             addFileToUploadList(file, path);
             selectedFiles.add(file);
         });
-    
+   
         // Show upload list and enable upload button
         document.getElementById('upload-list').classList.remove('d-none');
         const uploadButton = document.getElementById('upload-button');
@@ -1108,7 +1108,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             uploadButton.disabled = false;
         }
     }
-    
+   
     // Drag and Drop functionality
     const dropZone = document.querySelector('.drop-zone');
     const input = dropZone.querySelector('.drop-zone__input');
@@ -1229,10 +1229,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         try {
             const progressBar = document.getElementById('upload-progress');
             progressBar.classList.remove('d-none');
-            
+           
             let totalSize = 0;
             let uploadedFiles = 0;
-            
+           
             for (const file of selectedFiles) {
                 const key = currentPrefix + file.fullPath;
                 const params = {
@@ -1255,13 +1255,13 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             await updateHistory('Upload', totalSize, uploadedFiles);
             showToast('Upload completed successfully!', 'success');
-            
+           
             // Clear selection
             selectedFiles.clear();
             updateFilesList();
             updateUploadButton();
             uploadList.classList.add('d-none');
-            
+           
             // Refresh the file list
             await fetchS3Contents(currentPrefix);
         } catch (err) {
@@ -1295,14 +1295,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     dropZone.addEventListener('drop', (e) => {
         e.preventDefault();
         dropZone.classList.remove('drop-zone--over');
-        
+       
         const items = Array.from(e.dataTransfer.items);
         // Only process if items contain a directory
         const hasFolder = items.some(item => {
             const entry = item.webkitGetAsEntry();
             return entry && entry.isDirectory;
         });
-        
+       
         if (hasFolder) {
             errorMessage.classList.add('d-none');
             selectedFiles.clear();
@@ -1350,7 +1350,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 uploadProgress.current++;
                 uploadProgress.size += file.size;
             }
-            
+           
             return uploadProgress;
         } catch (error) {
             throw error;
@@ -1365,28 +1365,28 @@ document.addEventListener('DOMContentLoaded', async function() {
     function initializeDropZone() {
         const dropZone = document.querySelector('.drop-zone');
         const input = dropZone.querySelector('input');
-        
+       
         if (!dropZone || !input) return;
-    
+   
         // Click to select folder
         dropZone.addEventListener('click', (e) => {
             input.click();
         });
-    
+   
         // Drag and drop handlers
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             dropZone.classList.add('drop-zone--over');
         });
-    
+   
         dropZone.addEventListener('dragleave', (e) => {
             dropZone.classList.remove('drop-zone--over');
         });
-    
+   
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
             dropZone.classList.remove('drop-zone--over');
-            
+           
             // Handle items
             const items = Array.from(e.dataTransfer.items);
             for (const item of items) {
@@ -1398,7 +1398,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
             }
         });
-    
+   
         // File input change handler
         input.addEventListener('change', (e) => {
             const files = Array.from(e.target.files);
@@ -1407,7 +1407,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
     }
-    
+   
     // Add these new helper functions
     function processDirectory(directoryEntry, path = '') {
         const dirReader = directoryEntry.createReader();
@@ -1422,13 +1422,13 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
     }
-    
+   
     function getFileFromEntry(fileEntry) {
         return new Promise((resolve) => {
             fileEntry.file(resolve);
         });
     }
-    
+   
     function addFileToUploadList(file, path) {
         const uploadList = document.getElementById('selected-files');
         const listItem = document.createElement('li');
@@ -1442,24 +1442,24 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <i class="fas fa-times"></i>
             </button>
         `;
-        
+       
         uploadList.appendChild(listItem);
         document.getElementById('upload-list').classList.remove('d-none');
         document.getElementById('upload-button').disabled = false;
     }
-    
+   
     function handleSelectedFiles(files) {
         // Clear previous selections
         const uploadList = document.getElementById('selected-files');
         uploadList.innerHTML = '';
-        
+       
         files.forEach(file => {
             // Use webkitRelativePath for folder structure
             const path = file.webkitRelativePath || file.name;
             addFileToUploadList(file, path);
         });
     }
-    
+   
     // Add this to your DOMContentLoaded event listener
     document.addEventListener('DOMContentLoaded', () => {
         // ...existing code...
@@ -1484,7 +1484,7 @@ function updateActiveTab(clickedTab) {
             sectionElement.classList.add('d-none');
         }
     });
-    
+   
     // Hide upload section except for home
     const uploadSection = document.querySelector('.upload-section');
     if (uploadSection) {
@@ -1641,20 +1641,20 @@ const initializeApp = async () => {
     try {
         // Initialize AWS first
         await initAWS();
-        
+       
         // Initialize drop zone and set up event listeners
         document.addEventListener('DOMContentLoaded', () => {
             initializeDropZone();
             setupEventListeners();
         });
-        
+       
         // Set up modal handlers
         setupModalHandlers();
-        
+       
         // Then fetch contents and load history
         await fetchS3Contents('');
         await loadHistory();
-        
+       
     } catch (error) {
         console.error('Error initializing app:', error);
         showToast('Error initializing application', 'danger');
@@ -1755,7 +1755,7 @@ async function handleUpload() {
         }
 
         const uploadProgress = await uploadFiles(folderInput.files, currentPrefix);
-        
+       
         if (uploadProgress.current > 0) {
             showToast(`Successfully uploaded ${uploadProgress.current} files!`, 'success');
             await updateHistory('Upload', uploadProgress.size, uploadProgress.current);
@@ -1832,10 +1832,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Handle dropped files
         dropZone.addEventListener('drop', handleDrop, false);
-        
+       
         // Handle click to upload
         dropZone.addEventListener('click', () => folderInput.click());
-        
+       
         // Handle file input change
         folderInput.addEventListener('change', handleChange);
     }
@@ -1865,7 +1865,7 @@ function unhighlight(e) {
 function handleDrop(e) {
     const dt = e.dataTransfer;
     const items = dt.items;
-    
+   
     if (items) {
         [...items].forEach(item => {
             if (item.kind === 'file') {
@@ -1904,12 +1904,12 @@ function handleFiles(files) {
     const uploadList = document.getElementById('upload-list');
     const uploadButton = document.getElementById('upload-button');
     const selectedFiles = document.getElementById('selected-files');
-    
+   
     if (!uploadList || !uploadButton || !selectedFiles) return;
-    
+   
     uploadList.classList.remove('d-none');
     uploadButton.disabled = false;
-    
+   
     files.forEach(file => {
         const path = file.webkitRelativePath || file.name;
         addFileToUploadList(file, path);
@@ -1919,7 +1919,7 @@ function handleFiles(files) {
 function addFileToUploadList(file, path) {
     const selectedFiles = document.getElementById('selected-files');
     if (!selectedFiles) return;
-    
+   
     const listItem = document.createElement('li');
     listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
     listItem.innerHTML = `
@@ -1931,7 +1931,7 @@ function addFileToUploadList(file, path) {
             <i class="fas fa-times"></i>
         </button>
     `;
-    
+   
     // Add remove button handler
     const removeButton = listItem.querySelector('.remove-file');
     removeButton.addEventListener('click', () => {
@@ -1942,12 +1942,12 @@ function addFileToUploadList(file, path) {
             document.getElementById('upload-button').disabled = true;
         }
     });
-    
+   
     selectedFiles.appendChild(listItem);
 }
 
 // Import the sendPasswordResetEmail function at the top with other Firebase imports
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } 
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail }
 from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js';
 
 // Add to your DOMContentLoaded event listener
@@ -1963,26 +1963,26 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Forgot Password form submission
     document.getElementById('forgot-password-form').addEventListener('submit', async function(e) {
         e.preventDefault();
-        
+       
         const email = document.getElementById('reset-email').value;
         const errorElement = document.getElementById('forgot-password-error');
         const successElement = document.getElementById('forgot-password-success');
-        
+       
         try {
             // Reset messages
             errorElement.classList.add('d-none');
             successElement.classList.add('d-none');
-            
+           
             // Send password reset email
             await sendPasswordResetEmail(auth, email);
-            
+           
             // Show success message
             successElement.textContent = 'Password reset link has been sent to your email.';
             successElement.classList.remove('d-none');
-            
+           
             // Clear the form
             document.getElementById('reset-email').value = '';
-            
+           
             // Close modal after 3 seconds
             setTimeout(() => {
                 $('#forgotPasswordModal').modal('hide');
@@ -2001,7 +2001,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     errorMessage = 'Too many attempts. Please try again later.';
                     break;
             }
-            
+           
             // Show error message
             errorElement.textContent = errorMessage;
             errorElement.classList.remove('d-none');
@@ -2037,7 +2037,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Set up drop zone event listeners
         dropZone.addEventListener('click', () => folderInput.click());
-        
+       
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             dropZone.classList.add('drop-zone--over');
@@ -2088,10 +2088,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update the handleFiles function to use the scoped variables
     function handleFiles(files) {
         if (!uploadList || !uploadButton || !selectedFilesList) return;
-        
+       
         uploadList.classList.remove('d-none');
         uploadButton.disabled = false;
-        
+       
         files.forEach(file => {
             const path = file.webkitRelativePath || file.name;
             addFileToUploadList(file, path);
@@ -2101,7 +2101,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update file list management functions to use the scoped variables
     function updateFilesList() {
         if (!selectedFilesList) return;
-        
+       
         selectedFilesList.innerHTML = Array.from(selectedFiles).map(file => `
             <li class="list-group-item">
                 <div>
@@ -2155,7 +2155,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             default: return 'th';
         }
     }
-    
+   
     function formatDate() {
         const date = new Date();
         const day = date.getDate();
@@ -2178,7 +2178,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Calculate costs (using AWS S3 Standard pricing)
             const storageGB = totalSize / (1024 * 1024 * 1024);
             const storageCost = storageGB * 0.023; // $0.023 per GB per month
-            
+           
             // Calculate transfer cost (example: assuming 10% of storage is transferred)
             const transferGB = storageGB * 0.1;
             const transferCost = transferGB * 0.09; // $0.09 per GB for data transfer
@@ -2308,5 +2308,3 @@ async function showMainUI(user) {
     document.getElementById('folders-section').classList.remove('d-none');
     document.getElementById('history-section').classList.add('d-none');
 }
-
-// ...existing code...
