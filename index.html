@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AWS File Manager</title>
     <script type="module" src="dist/config.js"></script>
-    <script type="module" src="app.js"></script><!-- Add Favicon -->
+    <script type="module" src="app.js"></script>
     <link rel="icon" type="image/x-icon" href="src/favicon.ico">
     <!-- External Scripts -->
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1001.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
-    
+   
     <!-- Firebase Configuration -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } 
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
         from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js';
         window.initializeApp = initializeApp;
         window.getAuth = getAuth;
@@ -22,7 +22,7 @@
         window.signOut = signOut;
         window.onAuthStateChanged = onAuthStateChanged;
     </script>
-    
+   
     <!-- Styles -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -99,7 +99,7 @@
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
                         <a class="nav-link" href="#" id="home-link">
-                            <i class="fas fa-home mr-2"></i>Home 
+                            <i class="fas fa-home mr-2"></i>Home
                             <span class="sr-only">(current)</span>
                         </a>
                     </li>
@@ -121,7 +121,7 @@
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-user-circle mr-2"></i><span id="display-name">Username</span>
                         </a>
@@ -153,9 +153,9 @@
                     <p>Drag & drop folder here or click to browse</p>
                     <small class="text-muted">Supported: Folders only</small>
                 </div>
-                <input type="file" id="folder-upload" 
+                <input type="file" id="folder-upload"
                        webkitdirectory mozdirectory directory multiple
-                       class="drop-zone__input" 
+                       class="drop-zone__input"
                        style="display: none;">
             </div>
             <div id="upload-list" class="upload-list d-none">
@@ -168,21 +168,21 @@
                 </button>
             </div>
             <div class="progress mt-3 d-none" id="upload-progress">
-                <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                     role="progressbar" 
-                     style="width: 0%;" 
-                     aria-valuenow="0" 
-                     aria-valuemin="0" 
+                <div class="progress-bar progress-bar-striped progress-bar-animated"
+                     role="progressbar"
+                     style="width: 0%;"
+                     aria-valuenow="0"
+                     aria-valuemin="0"
                      aria-valuemax="100">0%</div>
             </div>
-            
+           
             <!-- Add Download Progress Bar -->
             <div class="progress mt-3 d-none" id="download-progress">
-                <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" 
-                     role="progressbar" 
-                     style="width: 0%;" 
-                     aria-valuenow="0" 
-                     aria-valuemin="0" 
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-info"
+                     role="progressbar"
+                     style="width: 0%;"
+                     aria-valuenow="0"
+                     aria-valuemin="0"
                      aria-valuemax="100">0%</div>
             </div>
         </div>
@@ -208,7 +208,7 @@
                                     <th style="width: 50px"></th>
                                     <th>Name</th>
                                     <th style="width: 120px">Size</th>
-                            
+                           
                                     <th style="width: 120px">Actions</th>
                                 </tr>
                             </thead>
@@ -286,7 +286,7 @@
     </div>
 
     <!-- Update Profile Modal -->
-    <div class="modal fade" id="updateProfileModal" tabindex="-1" role="dialog" 
+    <div class="modal fade" id="updateProfileModal" tabindex="-1" role="dialog"
          aria-labelledby="updateProfileModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -317,7 +317,7 @@
     </div>
 
     <!-- Change Password Modal -->
-    <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" 
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog"
          aria-labelledby="changePasswordModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -358,7 +358,12 @@
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    <script src="config.js"></script>
-    <script src="app.js" type="module"></script>
+    <script type="module">
+        import config from './config.js';
+        window.appConfig = config;
+    </script>
+    <script type="module" src="app.js"></script>
+    <script src="src/config.js"></script>
+    <script src="dist/bundle.js"></script>
 </body>
 </html>
