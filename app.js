@@ -1,5 +1,3 @@
-import config from './config.js';
-console.log('AWS Region:', window.appConfig.AWS_REGION);
 function showToast(message, type = 'info', duration = 3000) {
     const toastId = `toast-${Date.now()}`;
     const toastHTML = `
